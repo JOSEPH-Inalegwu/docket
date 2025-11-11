@@ -55,7 +55,7 @@ export default function Hero() {
       <div className="max-w-5xl mx-auto px-4 mb-12 sm:mb-16">
         <div className="rounded-lg sm:rounded-xl shadow-xl sm:shadow-2xl border border-gray-200 overflow-hidden bg-gradient-to-br from-purple-50 to-blue-50">
           <Image 
-            src="/images/Hero-Dashboard.jpeg"
+            src="/images/Dashboard-img.jpeg"
             alt="Unified Shopify dashboard showing analytics, integrations with Stripe, Facebook Ads, and Gorgias customer support"
             width={1200}
             height={675}
@@ -67,21 +67,57 @@ export default function Hero() {
       </div>
 
       {/* Integration Logos */}
-      <div className="mt-12 sm:mt-16 px-4">
-        <p className="text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6">
-          Integrates with your favorite tools
-        </p>
-        <div 
-          className="flex items-center justify-center gap-4 sm:gap-6 md:gap-8 flex-wrap opacity-60 grayscale"
-          role="list"
-          aria-label="Integration partners"
-        >
-          <span className="text-lg sm:text-xl md:text-2xl font-bold" role="listitem">Shopify</span>
-          <span className="text-lg sm:text-xl md:text-2xl font-bold" role="listitem">Stripe</span>
-          <span className="text-lg sm:text-xl md:text-2xl font-bold" role="listitem">Facebook</span>
-          <span className="text-lg sm:text-xl md:text-2xl font-bold" role="listitem">Gorgias</span>
-        </div>
-      </div> 
+<div className="mt-12 sm:mt-16 px-4">
+  <p className="text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6">
+    Integrates with your favorite tools
+  </p>
+  <div 
+    className="flex items-center justify-center gap-6 sm:gap-8 md:gap-12 flex-wrap"
+    role="list"
+    aria-label="Integration partners"
+  >
+    <div className='flex items-end'>
+      <Image 
+      src="/images/logos/shopify.svg" 
+      alt="Shopify" 
+      className="h-8 sm:h-10 w-auto transition-all duration-300"
+      width={100}
+      height={40}
+      role="listitem"
+    />
+    <p className='text-sm sm:text-xl font-bold text-gray-500 italic'
+    >Shopify</p>
+    </div>
+    <Image 
+      src="/images/logos/stripe.svg" 
+      alt="Stripe" 
+      className="h-9 sm:h-12 w-auto transition-all duration-300"
+      width={100}
+      height={40}
+      role="listitem"
+    />
+    <Image 
+      src="/images/logos/facebook.svg" 
+      alt="Facebook" 
+      className="h-9 sm:h-12 w-auto transition-all duration-300"
+      width={100}
+      height={40}
+      role="listitem"
+    />
+    <div className='flex items-center gap-2'>
+      <Image 
+      src="/images/logos/gorgias.png" 
+      alt="Gorgias" 
+      className="h-8 sm:h-10 w-auto transition-all duration-300"
+      width={100}
+      height={40}
+      role="listitem"
+    />
+    <p className='text-sm sm:text-xl font-bold text-gray-500'
+    >gorgias</p>
+    </div>
+  </div>
+</div>
     </section>
   )
 }

@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Hero from "@/components/landing/hero";
 import LandingNavbar from '@/components/navigation/landing-navbar'
+import HowItWorks from "@/components/landing/how-it-works-section";
 
 
 export default async function LandingPage() {
@@ -15,6 +16,7 @@ export default async function LandingPage() {
     <main>
         <LandingNavbar />
         <Hero />
+        <HowItWorks />
     </main>
   );
 }
