@@ -27,7 +27,7 @@ export default function LandingNavbar() {
           </Link>
         </nav>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-5">
           <SignedOut>
             <SignInButton mode="modal">
               <button className="text-sm font-medium cursor-pointer hover:text-[#6c47ff]">
@@ -41,11 +41,6 @@ export default function LandingNavbar() {
             </SignUpButton>
           </SignedOut>
           <SignedIn>
-            <Link href="/dashboard">
-              <button className="text-sm font-medium hover:text-[#6c47ff]">
-                Dashboard
-              </button>
-            </Link>
             <UserButton afterSignOutUrl="/" />
           </SignedIn>
         </div>
