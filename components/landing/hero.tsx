@@ -6,7 +6,7 @@ import BrandIntegrations from '../ui/brands'
 
 export default function Hero() {
   return (
-    <section 
+    <section id='home'
       className="relative mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-14 md:py-16 lg:py-18 text-center overflow-hidden"
       aria-labelledby="hero-heading"
     >
@@ -26,12 +26,12 @@ export default function Hero() {
         id="hero-heading"
         className="font-bold text-[2rem] sm:text-[2.75rem] md:text-[3.5rem] lg:text-[4rem] leading-tight md:leading-[1.1] text-[rgb(19,19,22)] mb-4 sm:mb-6 px-4 text-center"
       >
-        Your Entire Shopify Store. <br />
+        All Your Business Tools. <br />
         <span className="text-[#6c47ff]">One Dashboard</span>
       </h1>
       
       <p className="text-base font-normal sm:text-lg md:text-xl text-gray-600 mb-6 sm:mb-8 max-w-2xl mx-auto px-4">
-        A unified dashboard for Shopify owners tired of juggling Shopify, Stripe, Facebook Ads, and Gorgias.
+        A unified dashboard for online businesses tired of juggling Shopify, Stripe, Meta Ads, Slack, and Gorgias.
       </p>
       
       {/* CTA Buttons */}
@@ -39,7 +39,7 @@ export default function Hero() {
         <SignUpButton mode="modal">
 
           <Button variant={'gradient'} aria-label='Start your free trial'>
-            Start Free Trial
+            Start for Free
           </Button>
         </SignUpButton>
         

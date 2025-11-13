@@ -6,6 +6,7 @@ import HowItWorks from "@/components/landing/how-it-works-section";
 import FeaturesSection from "@/components/landing/features-section";
 // import PricingSection from "@/components/landing/pricing-section"
 import FaqISection from "@/components/landing/faq-section";
+import Footer from "@/components/landing/footer";
 
 
 export default async function LandingPage() {
@@ -23,6 +24,7 @@ export default async function LandingPage() {
         <FeaturesSection />
         {/* <PricingSection /> */}
         <FaqISection />
+        <Footer />
     </main>
   );
 }

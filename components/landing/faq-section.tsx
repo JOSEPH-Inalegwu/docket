@@ -55,7 +55,8 @@ export default function FaqSection() {
   ];
 
   return (
-    <section className="min-h-screen bg-gradient-to-b from-white to-gray-50 text-gray-900">
+    <section id="faq"
+    className="min-h-screen bg-gradient-to-b from-white to-gray-50 text-gray-900">
       <div className="max-w-7xl px-4 sm:px-6 md:px-8 py-16 mx-auto">
         {/* Header Section */}
         <div className="text-center mb-16 animate-in fade-in slide-in-from-bottom-4 duration-700">

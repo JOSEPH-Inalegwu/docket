@@ -137,7 +137,7 @@ function FeatureCard({ feature, index, isLeft }: { feature: Feature; index: numb
 
 export default function FeaturesSection() {
   return (
-    <section 
+    <section id='features'
       className="py-20 px-4 bg-white"
       aria-labelledby="features-heading"
     >

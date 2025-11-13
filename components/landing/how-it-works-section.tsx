@@ -123,7 +123,7 @@ function StepCard({ step, index }: { step: Step; index: number }) {
 
 export default function HowItWorksSection() {
   return (
-    <section 
+    <section id='how-it-works'
       className="py-20 px-2 bg-gradient-to-b from-white to-gray-100"
       aria-labelledby="how-it-works-heading"
     >

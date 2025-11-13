@@ -10,20 +10,17 @@ export default function LandingNavbar() {
         </Link>
 
         <nav className="hidden md:flex items-center space-x-6">
-          <Link href="/#features" className="text-sm font-medium hover:text-[#6c47ff]">
+          <Link href="/#home" className="text-sm font-medium hover:text-[#6c47ff]">
             Home
           </Link>
-          <Link href="/#features" className="text-sm font-medium hover:text-[#6c47ff]">
+          <Link href="/#how-it-works" className="text-sm font-medium hover:text-[#6c47ff]">
             How It Works
           </Link>
           <Link href="/#features" className="text-sm font-medium hover:text-[#6c47ff]">
             Features
           </Link>
-          <Link href="/#pricing" className="text-sm font-medium hover:text-[#6c47ff]">
-            Pricing
-          </Link>
-          <Link href="/pricing" className="text-sm font-medium hover:text-[#6c47ff]">
-            Docs
+          <Link href="/#faq" className="text-sm font-medium hover:text-[#6c47ff]">
+            FAQ
           </Link>
         </nav>
 
@@ -36,7 +33,7 @@ export default function LandingNavbar() {
             </SignInButton>
             <SignUpButton mode="modal">
               <button className="bg-[#6c47ff] text-white rounded-full font-medium text-sm h-10 px-5 hover:bg-[#5a3ad1]">
-                Start Free Trial
+                Get Started
               </button>
             </SignUpButton>
           </SignedOut>
