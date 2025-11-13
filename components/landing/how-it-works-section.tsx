@@ -124,7 +124,7 @@ function StepCard({ step, index }: { step: Step; index: number }) {
 export default function HowItWorksSection() {
   return (
     <section 
-      className="py-20 px-2 bg-gradient-to-b from-white to-gray-50"
+      className="py-20 px-2 bg-gradient-to-b from-white to-gray-50 border"
       aria-labelledby="how-it-works-heading"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
