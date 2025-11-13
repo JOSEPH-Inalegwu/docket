@@ -4,17 +4,11 @@ import { useEffect, useRef, useState } from 'react';
 import { 
   Gauge, 
   Bell, 
-  BarChart3, 
   Zap, 
-  Shield, 
-  Users,
-  Clock,
   TrendingUp,
   Download,
-  Smartphone,
-  Lock,
-  Palette
 } from 'lucide-react';
+import { Button } from '../ui/button';
 
 interface Feature {
   icon: React.ReactNode;
@@ -40,16 +34,9 @@ const features: Feature[] = [
     image: '/images/Alert Screen.jpeg'
   },
   {
-    icon: <TrendingUp className="w-6 h-6" />,
-    title: 'Historical Trend Analysis',
-    description: "Compare today vs yesterday, this week vs last week, or any custom date range. Spot patterns, identify what's working, and predict problems before they escalate.",
-    benefit: 'Make data-driven decisions confidently',
-    image: '/images/Analytics Chart.jpeg'
-  },
-  {
     icon: <Zap className="w-6 h-6" />,
     title: 'One-Click Integrations',
-    description: 'Connect Shopify, Stripe, Facebook Ads, Google Analytics, Gorgias, and 20+ platforms in under 5 minutes. Secure OAuth authentication—no API keys, no developer needed.',
+    description: 'Connect Shopify, Stripe, Facebook Ads, Google Analytics, Gorgias, and 10+ platforms in under 5 minutes. Secure OAuth authentication—no API keys, no developer needed.',
     benefit: 'Setup in minutes, not days',
     image: '/images/Connected Interface.jpeg'
   },
@@ -102,7 +89,7 @@ function FeatureCard({ feature, index, isLeft }: { feature: Feature; index: numb
         </div>
 
         {/* Title */}
-        <h3 className="text-3xl font-bold text-gray-900">
+        <h3 className="font-semibold text-[1.5rem] sm:text-[1.75rem] md:text-[2rem] lg:text-[2.25rem] leading-snug md:leading-[1.2] text-[rgb(60,60,63)] mb-3 sm:mb-4">
           {feature.title}
         </h3>
 
@@ -159,12 +146,12 @@ export default function FeaturesSection() {
         <div className="text-center max-w-3xl mx-auto mb-20">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#6c47ff]/10 text-[#6c47ff] rounded-full text-sm font-semibold mb-4">
             <Zap className="w-4 h-4" />
-            POWERFUL FEATURES
+           <p>POWERFUL FEATURES</p>
           </div>
           
           <h2 
             id="features-heading"
-            className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6"
+            className="font-bold text-[1.75rem] sm:text-[2.25rem] md:text-[2.75rem] lg:text-[3rem] leading-tight md:leading-[1.15] text-[rgb(19,19,22)] mb-4 sm:mb-6 px-4"
           >
             Everything You Need to{' '}
             <span className="text-[#6c47ff] relative">
@@ -217,9 +204,11 @@ export default function FeaturesSection() {
               <p className="font-semibold text-gray-900">Join 500+ ecommerce brands</p>
               <p className="text-sm text-gray-600">who monitor their business with Statify</p>
             </div>
-            <button className="ml-auto px-6 py-3 bg-[#6c47ff] text-white rounded-lg font-semibold hover:bg-[#5a3de6] transition-colors shadow-lg">
+
+            <Button variant={'gradient'} aria-label='Start your free trial'>
               Start Free Trial
-            </button>
+            </Button>
+            
           </div>
         </div>
       </div>

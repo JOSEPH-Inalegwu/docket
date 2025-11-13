@@ -1,19 +1,21 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
-
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap font-normal text-base sm:text-lg transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 active:scale-100",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        default:
+          "w-full sm:w-auto bg-[#6c47ff] text-white rounded-full h-10 sm:h-12 px-6 sm:px-8 font-medium  hover:bg-[#5a3ad1] shadow-lg hover:shadow-xl hover:scale-105 active:scale-100",
         destructive:
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+        gradient:
+          "w-full sm:w-auto bg-gradient-to-r from-[#6c47ff] to-[#7f3eff] text-white rounded-full hover:opacity-90 shadow-lg hover:shadow-xl hover:scale-105 transition-all",
         outline:
-          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+          "w-full sm:w-auto border-2 border-[#6c47ff] text-[#6c47ff] rounded-full font-medium text-base sm:text-lg h-10 sm:h-12 px-6 sm:px-8 hover:bg-purple-50 transition-all active:scale-95 cursor-pointer",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost:
@@ -21,12 +23,10 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-9 px-4 py-2 has-[>svg]:px-3",
-        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
-        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
+        default: "h-10 sm:h-12 px-6 sm:px-8",
+        sm: "h-9 px-3 rounded-md",
+        lg: "h-11 px-8 rounded-md",
         icon: "size-9",
-        "icon-sm": "size-8",
-        "icon-lg": "size-10",
       },
     },
     defaultVariants: {

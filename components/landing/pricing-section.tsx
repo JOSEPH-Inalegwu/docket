@@ -36,19 +36,18 @@ const pricingTiers: PricingTier[] = [
       'Up to 3 custom alerts'
     ],
     limitations: [
-      'No team collaboration',
       'No automated reports',
       'Limited integrations'
     ],
     cta: 'Start Free',
-    highlight: 'No credit card required'
+    // highlight: 'No credit card required'
   },
   {
     name: 'Pro',
     icon: <Crown className="w-5 h-5 sm:w-6 sm:h-6" />,
     price: {
-      monthly: 49,
-      annual: 39
+      monthly: 29,
+      annual: 19
     },
     description: 'For growing businesses that need real-time insights',
     features: [
@@ -58,7 +57,6 @@ const pricingTiers: PricingTier[] = [
       'Unlimited custom alerts',
       'Slack + Email + SMS notifications',
       'Automated daily/weekly reports',
-      'Custom date range comparisons',
       'Priority support',
       'Export to CSV/PDF'
     ],
@@ -77,14 +75,12 @@ const pricingTiers: PricingTier[] = [
     features: [
       'Everything in Pro',
       'Unlimited data history',
-      'Advanced role permissions',
       'Custom integrations via API',
       'Dedicated success manager',
       'SLA guarantee (99.9% uptime)',
       'Custom data retention policies',
       'Priority feature requests',
       'White-label options',
-      'SOC 2 compliance support'
     ],
     cta: 'Contact Sales',
     highlight: 'Custom pricing'
@@ -93,6 +89,7 @@ const pricingTiers: PricingTier[] = [
 
 export default function PricingSection() {
   const [isAnnual, setIsAnnual] = useState(false);
+  const [showTooltip, setShowTooltip] = useState<string | null>(null);
 
   return (
     <section 
@@ -104,7 +101,7 @@ export default function PricingSection() {
         <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-10 lg:mb-12">
           <h2 
             id="pricing-heading"
-            className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6"
+            className="font-bold text-[1.75rem] sm:text-[2.25rem] md:text-[2.75rem] lg:text-[3rem] leading-tight md:leading-[1.15] text-[rgb(19,19,22)] mb-3 sm:mb-5 px-4"
           >
             Simple, Transparent{' '}
             <span className="text-[#6c47ff] relative inline-block">
@@ -186,7 +183,7 @@ export default function PricingSection() {
                 `}>
                   {tier.icon}
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-gray-900">{tier.name}</h3>
+                <h3 className="text-xl sm:text-2xl font-bold text-[rgb(60,60,63)]">{tier.name}</h3>
               </div>
 
               {/* Price */}
@@ -220,17 +217,33 @@ export default function PricingSection() {
               <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">{tier.description}</p>
 
               {/* CTA Button */}
-              <button
-                className={`
-                  w-full py-2 sm:py-3 lg:py-4 text-base sm:text-lg font-semibold rounded-lg transition-all mb-6 sm:mb-8
-                  ${tier.popular 
-                    ? 'bg-[#6c47ff] hover:bg-[#5a3de6] text-white shadow-lg' 
-                    : 'bg-gray-900 hover:bg-gray-800 text-white'
-                  }
-                `}
-              >
-                {tier.cta}
-              </button>
+              <div className="relative">
+                <button
+                  onClick={() => {
+                    if (tier.name !== 'Freemium') {
+                      setShowTooltip(tier.name);
+                      setTimeout(() => setShowTooltip(null), 3000);
+                    }
+                  }}
+                  className={`
+                    w-full py-2 sm:py-3 text-base sm:text-lg font-semibold rounded-lg transition-all mb-6 sm:mb-8
+                    ${tier.popular 
+                      ? 'bg-[#6c47ff] hover:bg-[#5a3de6] text-white shadow-lg' 
+                      : 'bg-gray-900 hover:bg-gray-800 text-white'
+                    }
+                  `}
+                >
+                  {tier.cta}
+                </button>
+                
+                {/* Tooltip */}
+                {showTooltip === tier.name && (
+                  <div className="absolute -top-16 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs sm:text-sm px-4 py-2 rounded-lg shadow-lg whitespace-nowrap z-10 animate-in fade-in slide-in-from-bottom-2">
+                    This is a portfolio demo - Free to use! 🎉
+                    <div className="absolute bottom-[-6px] left-1/2 -translate-x-1/2 w-3 h-3 bg-gray-900 rotate-45"></div>
+                  </div>
+                )}
+              </div>
 
               {/* Highlight */}
               {tier.highlight && !tier.popular && (

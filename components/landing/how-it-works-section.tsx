@@ -103,7 +103,7 @@ function StepCard({ step, index }: { step: Step; index: number }) {
         </div>
 
         {/* Content */}
-        <h3 className="text-xl font-bold text-gray-900 mb-3">
+        <h3 className="text-xl font-bold text-[rgb(60,60,63)] mb-3">
           {step.title}
         </h3>
         
@@ -124,7 +124,7 @@ function StepCard({ step, index }: { step: Step; index: number }) {
 export default function HowItWorksSection() {
   return (
     <section 
-      className="py-20 px-2 bg-gradient-to-b from-white to-gray-50 border"
+      className="py-20 px-2 bg-gradient-to-b from-white to-gray-100"
       aria-labelledby="how-it-works-heading"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -132,7 +132,7 @@ export default function HowItWorksSection() {
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 
             id="how-it-works-heading"
-            className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4"
+            className="font-bold text-[1.75rem] sm:text-[2.25rem] md:text-[2.75rem] lg:text-[3rem] leading-tight md:leading-[1.15] text-[rgb(19,19,22)] mb-4 sm:mb-6 px-4"
           >
             Get Started in{' '}
             <span className="text-[#6c47ff] relative">
@@ -154,7 +154,7 @@ export default function HowItWorksSection() {
               </svg>
             </span>
           </h2>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-gray-600 font-normal">
             From signup to unified dashboard in under 5 minutes. No technical knowledge required.
           </p>
         </div>
