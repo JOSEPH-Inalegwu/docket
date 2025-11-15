@@ -13,7 +13,7 @@ export default function LandingNavbar() {
   const closeMenu = () => setIsOpen(false)
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur">
+    <header className="sticky top-0 z-50 w-full border-b border-gray-200 dark:border-gray-200 bg-white/95 backdrop-blur transition-colors duration-500">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
       <Link href="/" className="flex items-center">
         <Image

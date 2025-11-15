@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import { redirect } from "next/navigation";
 import Hero from "@/components/landing/hero";
 import LandingNavbar from '@/components/navigation/landing-navbar'
@@ -17,14 +18,17 @@ export default async function LandingPage() {
   }
 
   return (
-    <main>
-        <LandingNavbar />
-        <Hero />
-        <HowItWorks />
-        <FeaturesSection />
-        {/* <PricingSection /> */}
-        <FaqISection />
-        <Footer />
-    </main>
+    <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+      <main className="bg-white text-gray-900 transition-colors duration-500">
+          <LandingNavbar />
+          <Hero />
+          <HowItWorks />
+          <FeaturesSection />
+          {/* <PricingSection /> */}
+          <FaqISection />
+          <Footer />
+      </main>
+    </ThemeProvider>
+
   );
 }
