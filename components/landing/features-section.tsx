@@ -9,6 +9,8 @@ import {
   Download,
 } from 'lucide-react';
 import { Button } from '../ui/button';
+import { SiShopify, SiStripe, SiMeta, SiSlack } from "react-icons/si";
+import { SignInButton } from '@clerk/nextjs';
 
 interface Feature {
   icon: React.ReactNode;
@@ -196,8 +198,13 @@ export default function FeaturesSection() {
         <div className="mt-20 text-center">
           <div className="inline-flex flex-col sm:flex-row items-center gap-4 p-8 bg-gradient-to-r from-[#6c47ff]/5 to-purple-50 rounded-2xl border border-[#6c47ff]/20">
             <div className="flex -space-x-2">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="w-10 h-10 rounded-full bg-gray-300 border-2 border-white" />
+              {[SiShopify, SiStripe, SiMeta, SiSlack].map((Icon, i) => (
+                <div
+                  key={i}
+                  className="w-10 h-10 rounded-full bg-white flex items-center justify-center border-2 border-[#6c47ff]"
+                >
+                  <Icon className="w-5 h-5 text-gray-700" />
+                </div>
               ))}
             </div>
             <div className="text-left">
@@ -205,9 +212,11 @@ export default function FeaturesSection() {
               <p className="text-sm text-gray-600">who monitor their business with Statify</p>
             </div>
 
-            <Button variant={'gradient'} aria-label='Start your free trial'>
-              Start Free Trial
+            <SignInButton mode="modal">
+              <Button variant={'gradient'} aria-label='Start for free'>
+              Get Started Free
             </Button>
+            </SignInButton>
             
           </div>
         </div>

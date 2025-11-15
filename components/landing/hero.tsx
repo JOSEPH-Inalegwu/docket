@@ -2,7 +2,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { SignUpButton } from '@clerk/nextjs'
 import { Button } from '../ui/button'
-import BrandIntegrations from '../ui/brands'
+// import BrandIntegrations from '../ui/brands'
+import FooterLogoIntegration from '../ui/footer-logo-integration'
 
 export default function Hero() {
   return (
@@ -64,7 +65,8 @@ export default function Hero() {
       </div>
 
       {/* Integration Logos */}
-      <BrandIntegrations />
+      {/* <BrandIntegrations /> */}
+      <FooterLogoIntegration showBorder={false} />
     </section>
   )
 }

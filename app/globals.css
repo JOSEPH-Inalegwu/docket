@@ -116,6 +116,11 @@ html {
   scroll-behavior: smooth;
 }
 
+@media (max-width: 767px) {
+  section {
+    scroll-margin-top: 4.5rem;
+  }
+}
 
 @layer base {
   * {

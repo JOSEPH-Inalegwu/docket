@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/collapsible";
 import { ChevronDown } from "lucide-react";
 import { Button } from "../ui/button";
+import { SignInButton } from "@clerk/nextjs";
 
 export default function FaqSection() {
   const [openTab, setOpenTab] = useState<number | null>(null);
@@ -155,9 +156,11 @@ export default function FaqSection() {
             Can't find what you're looking for? Start using Statify for free or help keep the APIs running.
           </p>
           <div className="flex justify-center gap-4 flex-wrap">
-           <Button aria-label="Get started with Statify for free">
-            Get Started for Free
-           </Button>
+          <SignInButton mode="modal">
+              <Button variant={'gradient'} aria-label='Start for free'>
+              Get Started Free
+            </Button>
+          </SignInButton>
            
             <Button variant="outline" aria-label="Support Statify to help keep APIs running">
               <span className="inline-block group-hover:scale-105 transition-transform">
@@ -166,6 +169,22 @@ export default function FaqSection() {
             </Button>
           </div>
         </div>
+      </div>
+
+      {/* Purple Curved Wave at the bottom */}
+      <div className="w-full overflow-hidden">
+        <svg
+          className="w-full h-40 md:h-48"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 1440 320"
+          preserveAspectRatio="none"
+        >
+          <path
+            fill="#6c47ff"
+            fillOpacity="1"
+            d="M0,160L60,181.3C120,203,240,245,360,250.7C480,256,600,224,720,229.3C840,235,960,277,1080,256C1200,235,1320,149,1380,106.7L1440,64L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"
+          ></path>
+        </svg>
       </div>
     </section>
   );

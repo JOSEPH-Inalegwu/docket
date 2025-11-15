@@ -163,7 +163,7 @@ export default function Footer() {
         </div>
 
         {/* Integration Logos */}
-        <FooterLogoIntegration />
+        <FooterLogoIntegration showBorder={true} />
 
         {/* Bottom Bar */}
         <div className="py-6 border-t border-gray-800">

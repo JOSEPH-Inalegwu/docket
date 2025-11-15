@@ -1,6 +1,12 @@
 import React from "react";
-import { SiShopify, SiStripe, SiMeta, SiSlack,  SiGoogleanalytics,
-  SiMailchimp, } from "react-icons/si";
+import {
+  SiShopify,
+  SiStripe,
+  SiMeta,
+  SiSlack,
+  SiGoogleanalytics,
+  SiMailchimp,
+} from "react-icons/si";
 import { FaMoneyBillWave } from "react-icons/fa";
 import { RiBankCard2Fill } from "react-icons/ri";
 
@@ -20,9 +26,13 @@ const integrations: Integration[] = [
   { name: "Mailchimp", icon: <SiMailchimp className="w-6 h-6 text-gray-400" /> },
 ];
 
-export default function FooterLogoIntegration() {
+interface FooterLogoIntegrationProps {
+  showBorder?: boolean;
+}
+
+export default function FooterLogoIntegration({ showBorder = true }: FooterLogoIntegrationProps) {
   return (
-    <div className="py-8 border-t border-gray-800">
+    <div className={`py-8 ${showBorder ? "border-t border-gray-800" : ""}`}>
       <p className="text-xs text-gray-500 text-center mb-4">
         Trusted integrations with leading platforms
       </p>
