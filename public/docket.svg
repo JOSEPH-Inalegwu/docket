@@ -1,0 +1,8 @@
+<!-- Docket — Stacked Cards (Solid) -->
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-labelledby="titleA descA">
+  <title id="titleA">Docket logo — stacked cards (solid)</title>
+  <desc id="descA">Three stacked rounded rectangles forming a document stack, representing Docket.</desc>
+  <rect x="12" y="14" rx="4" ry="4" width="40" height="12" fill="var(--primary,#6c47ff)"/>
+  <rect x="14" y="26" rx="4" ry="4" width="36" height="12" fill="var(--primary-2,#4f33cc)"/>
+  <rect x="16" y="38" rx="4" ry="4" width="32" height="12" fill="var(--primary-3,#35208f)"/>
+</svg>

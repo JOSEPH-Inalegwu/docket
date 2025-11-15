@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image';
 import { SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
 import { Menu, X } from 'lucide-react'
 
@@ -14,9 +15,17 @@ export default function LandingNavbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link href="/" className="flex items-center space-x-2">
-          <span className="text-2xl font-bold text-[#6c47ff]">Statify</span>
-        </Link>
+      <Link href="/" className="flex items-center">
+        <Image
+          src="/docket.svg"
+          alt="Docket logo"
+          width={40}
+          height={35}
+        />
+        <span className="text-2xl font-bold text-[#6c47ff]">
+          Docket
+        </span>
+      </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6">

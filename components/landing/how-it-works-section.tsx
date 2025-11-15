@@ -22,7 +22,7 @@ const steps: Step[] = [
   {
     number: '02',
     title: 'Automated Data Collection',
-    description: 'Statify continuously syncs sales, ad spend, conversion rates, customer tickets, and payment metrics from all connected platforms. Data updates every 5 minutes so you always see current performance.',
+    description: 'Docket continuously syncs sales, ad spend, conversion rates, customer tickets, and payment metrics from all connected platforms. Data updates every 5 minutes so you always see current performance.',
     icon: <BarChart3 className="w-6 h-6" />,
     highlight: 'Real-time sync'
   },

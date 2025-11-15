@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Statify - Your Shopify Dashboard in 10 Seconds',
+  title: 'Docket - All-in-One Dashboard for E-commerce Metrics',
   description: 'Stop switching between 8 dashboards. Monitor sales, payments, marketing, and support in one real-time view.',
 }
 

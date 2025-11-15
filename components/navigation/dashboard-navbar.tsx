@@ -7,7 +7,7 @@ export default function DashboardNavbar() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link href="/dashboard" className="flex items-center space-x-2">
-          <span className="text-2xl font-bold text-[#6c47ff]">Statify</span>
+          <span className="text-2xl font-bold text-[#6c47ff]">Docket</span>
         </Link>
 
         {/* Navigation Links */}

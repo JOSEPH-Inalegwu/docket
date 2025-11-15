@@ -13,8 +13,14 @@ export default function Footer() {
         <div className="py-12 sm:py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand Section */}
           <div className="space-y-4">
-            <Link href="/" className="inline-block">
-              <span className="text-2xl font-bold text-white">Statify</span>
+            <Link href="/" className="flex items-center">
+             <Image
+                src="/docket.svg"
+                alt="Docket logo"
+                width={30}
+                height={30}
+              />
+              <span className="text-2xl font-bold text-white">Docket</span>
             </Link>
             <p className="text-sm text-gray-400 leading-relaxed">
               Your unified dashboard for e-commerce. Connect all your business tools in one place and get real-time insights.
@@ -169,7 +175,7 @@ export default function Footer() {
         <div className="py-6 border-t border-gray-800">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-xs sm:text-sm text-gray-500">
-              © {currentYear} Statify. All rights reserved. Built with ❤️ for e-commerce owners.
+              © {currentYear} Docket. All rights reserved. Built with ❤️ for e-commerce owners.
             </p>
             <div className="flex items-center gap-4 sm:gap-6">
               <Link href="/privacy" className="text-xs sm:text-sm text-gray-500 hover:text-white transition-colors">

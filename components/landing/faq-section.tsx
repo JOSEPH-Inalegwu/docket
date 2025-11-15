@@ -19,21 +19,21 @@ export default function FaqSection() {
   const faqData = [
     {
       id: 1,
-      question: "What is Statify?",
+      question: "What is Docket?",
       answer:
-        "Statify is a unified dashboard that connects your e-commerce platforms, payment processors, marketing tools, and customer support systems into one real-time view. Whether you're using Shopify, WooCommerce, Stripe, Meta Ads, or Gorgias, stop switching between 8+ tabs and get the insights you need instantly.",
+        "Docket is a unified dashboard that connects your e-commerce platforms, payment processors, marketing tools, and customer support systems into one real-time view. Whether you're using Shopify, WooCommerce, Stripe, Meta Ads, or Gorgias, stop switching between 8+ tabs and get the insights you need instantly.",
     },
     {
       id: 2,
-      question: "Is Statify really free?",
+      question: "Is Docket really free?",
       answer:
-        "Yes! Statify is completely free to use for all e-commerce businesses. I built this to solve a real problem for online store owners who were drowning in dashboards. Since maintaining API integrations and server infrastructure has ongoing costs, I'd appreciate support through Buy Me a Coffee to keep the service reliable and fast.",
+        "Yes! Docket is completely free to use for all e-commerce businesses. I built this to solve a real problem for online store owners who were drowning in dashboards. Since maintaining API integrations and server infrastructure has ongoing costs, I'd appreciate support through Buy Me a Coffee to keep the service reliable and fast.",
     },
     {
       id: 3,
-      question: "Which platforms does Statify integrate with?",
+      question: "Which platforms does Docket integrate with?",
       answer:
-        "Statify connects with popular e-commerce platforms (Shopify, WooCommerce, BigCommerce), payment processors (Stripe, PayPal), marketing tools (Meta Ads, Facebook Ads, Google Ads), communication platforms (Slack, Gorgias), and more. All integrations pull real-time data from your connected accounts—no manual data entry required.",
+        "Docket connects with popular e-commerce platforms (Shopify, WooCommerce, BigCommerce), payment processors (Stripe, PayPal), marketing tools (Meta Ads, Facebook Ads, Google Ads), communication platforms (Slack, Gorgias), and more. All integrations pull real-time data from your connected accounts—no manual data entry required.",
     },
     {
       id: 4,
@@ -51,7 +51,7 @@ export default function FaqSection() {
       id: 6,
       question: "How secure is my data?",
       answer:
-        "Data security is paramount. Statify uses industry-standard OAuth 2.0 authentication, end-to-end encrypted connections (TLS 1.3), and never stores sensitive information like payment details or customer passwords. All integrations are read-only by default, meaning Statify can view your data but cannot make changes to your accounts without explicit permission.",
+        "Data security is paramount. Docket uses industry-standard OAuth 2.0 authentication, end-to-end encrypted connections (TLS 1.3), and never stores sensitive information like payment details or customer passwords. All integrations are read-only by default, meaning Docket can view your data but cannot make changes to your accounts without explicit permission.",
     },
   ];
 
@@ -153,7 +153,7 @@ export default function FaqSection() {
             Still have questions?
           </h3>
           <p className="opacity-70 mb-6 text-base sm:text-lg">
-            Can't find what you're looking for? Start using Statify for free or help keep the APIs running.
+            Can't find what you're looking for? Start using Docket for free or help keep the APIs running.
           </p>
           <div className="flex justify-center gap-4 flex-wrap">
           <SignInButton mode="modal">
@@ -162,7 +162,7 @@ export default function FaqSection() {
             </Button>
           </SignInButton>
            
-            <Button variant="outline" aria-label="Support Statify to help keep APIs running">
+            <Button variant="outline" aria-label="Support Docket to help keep APIs running">
               <span className="inline-block group-hover:scale-105 transition-transform">
                 Help Keep APIs Running ☕
               </span>

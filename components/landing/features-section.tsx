@@ -209,7 +209,7 @@ export default function FeaturesSection() {
             </div>
             <div className="text-left">
               <p className="font-semibold text-gray-900">Join 500+ ecommerce brands</p>
-              <p className="text-sm text-gray-600">who monitor their business with Statify</p>
+              <p className="text-sm text-gray-600">who monitor their business with Docket</p>
             </div>
 
             <SignInButton mode="modal">

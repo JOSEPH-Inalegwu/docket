@@ -26,7 +26,7 @@ const pricingTiers: PricingTier[] = [
       monthly: 0,
       annual: 0
     },
-    description: 'Perfect for getting started and exploring Statify',
+    description: 'Perfect for getting started and exploring Docket',
     features: [
       '2 platform integration',
       'Basic dashboard view',

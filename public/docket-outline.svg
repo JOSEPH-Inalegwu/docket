@@ -1,0 +1,13 @@
+<!-- Docket — Stacked Cards (Outline, White with Bottom Gray) -->
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-labelledby="titleB descB">
+  <title id="titleB">Docket logo — stacked cards (outline)</title>
+  <desc id="descB">Three stacked rounded rectangles outlined to form a minimal logo for Docket.</desc>
+  <g fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="2">
+    <!-- Top rectangle — white -->
+    <rect x="12" y="14" rx="4" ry="4" width="40" height="12" stroke="white"/>
+    <!-- Middle rectangle — white -->
+    <rect x="14" y="26" rx="4" ry="4" width="36" height="12" stroke="white"/>
+    <!-- Bottom rectangle — light gray -->
+    <rect x="16" y="38" rx="4" ry="4" width="32" height="12" stroke="#d3d3d3"/>
+  </g>
+</svg>
