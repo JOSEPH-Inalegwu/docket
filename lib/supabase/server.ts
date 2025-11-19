@@ -1,16 +1,53 @@
 import { createClient } from '@supabase/supabase-js'
-import { Database } from './client'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+// Type definitions for Supabase schema
+export interface OAuthState {
+  id: string // UUID
+  user_id: string
+  provider: string
+  state: string
+  expires_at: string 
+  created_at: string | null 
+}
+
+export interface ToolConnection {
+  id: string // UUID
+  user_id: string
+  provider: string
+  access_token: string
+  refresh_token: string | null
+  shop_domain: string | null
+  token_expires_at: string | null 
+  connected_at: string | null 
+  last_synced_at: string | null 
+  is_active: boolean 
+  metadata: Record<string, unknown> | null
+}
+
+export interface ApiUsage {
+  id: string // UUID
+  user_id: string
+  provider: string
+  endpoint: string
+  request_count: number
+  window_start: string 
+  window_end: string 
+  created_at: string | null 
+}
+
+// Constants
+const POSTGRES_NO_ROWS = 'PGRST116'
+
+// Environment validation
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 if (!supabaseUrl || !supabaseServiceKey) {
   throw new Error('Missing Supabase service role environment variables')
 }
 
-// Server-side Supabase client with service role key
-// BYPASSES RLS - use only in API routes and server components
-export const supabaseAdmin = createClient<Database>(supabaseUrl, supabaseServiceKey, {
+// Server-side Supabase client
+export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
   auth: {
     persistSession: false,
     autoRefreshToken: false,
@@ -26,8 +63,8 @@ export async function storeOAuthState(
   userId: string,
   provider: string,
   state: string
-) {
-  const expiresAt = new Date(Date.now() + 5 * 60 * 1000) // 5 minutes
+): Promise<OAuthState> {
+  const expiresAt = new Date(Date.now() + 5 * 60 * 1000) 
 
   const { data, error } = await supabaseAdmin
     .from('oauth_states')
@@ -45,7 +82,7 @@ export async function storeOAuthState(
     throw new Error('Failed to store OAuth state')
   }
 
-  return data
+  return data as OAuthState
 }
 
 /**
@@ -54,7 +91,7 @@ export async function storeOAuthState(
 export async function verifyAndConsumeOAuthState(
   state: string,
   userId: string
-) {
+): Promise<OAuthState | null> {
   const { data, error } = await supabaseAdmin
     .from('oauth_states')
     .select()
@@ -66,17 +103,19 @@ export async function verifyAndConsumeOAuthState(
     return null
   }
 
+  const oauthState = data as OAuthState
+
   // Check if expired
-  if (new Date(data.expires_at) < new Date()) {
+  if (new Date(oauthState.expires_at) < new Date()) {
     // Delete expired state
-    await supabaseAdmin.from('oauth_states').delete().eq('id', data.id)
+    await supabaseAdmin.from('oauth_states').delete().eq('id', oauthState.id)
     return null
   }
 
   // Delete state after verification (one-time use)
-  await supabaseAdmin.from('oauth_states').delete().eq('id', data.id)
+  await supabaseAdmin.from('oauth_states').delete().eq('id', oauthState.id)
 
-  return data
+  return oauthState
 }
 
 /**
@@ -90,9 +129,9 @@ export async function upsertToolConnection(
     refreshToken?: string | null
     shopDomain?: string | null
     expiresAt?: Date | null
-    metadata?: Record<string, any> | null
+    metadata?: Record<string, unknown> | null
   }
-) {
+): Promise<ToolConnection> {
   const { data: connection, error } = await supabaseAdmin
     .from('tool_connections')
     .upsert(
@@ -119,13 +158,16 @@ export async function upsertToolConnection(
     throw new Error('Failed to store connection')
   }
 
-  return connection
+  return connection as ToolConnection
 }
 
 /**
  * Get tool connection for user
  */
-export async function getToolConnection(userId: string, provider: string) {
+export async function getToolConnection(
+  userId: string,
+  provider: string
+): Promise<ToolConnection | null> {
   const { data, error } = await supabaseAdmin
     .from('tool_connections')
     .select()
@@ -138,13 +180,13 @@ export async function getToolConnection(userId: string, provider: string) {
     return null
   }
 
-  return data
+  return data as ToolConnection
 }
 
 /**
  * Get all active connections for user
  */
-export async function getUserConnections(userId: string) {
+export async function getUserConnections(userId: string): Promise<ToolConnection[]> {
   const { data, error } = await supabaseAdmin
     .from('tool_connections')
     .select()
@@ -156,13 +198,16 @@ export async function getUserConnections(userId: string) {
     return []
   }
 
-  return data
+  return (data as ToolConnection[]) || []
 }
 
 /**
  * Disconnect tool (soft delete)
  */
-export async function disconnectTool(userId: string, provider: string) {
+export async function disconnectTool(
+  userId: string,
+  provider: string
+): Promise<boolean> {
   const { error } = await supabaseAdmin
     .from('tool_connections')
     .update({ is_active: false })
@@ -199,13 +244,14 @@ export async function checkRateLimit(
     .lt('window_end', windowEnd.toISOString())
     .single()
 
-  if (error && error.code !== 'PGRST116') {
+  if (error && error.code !== POSTGRES_NO_ROWS) {
     // PGRST116 = no rows found (first request in window)
     console.error('Error checking rate limit:', error)
     return { allowed: false, remaining: 0 }
   }
 
-  const currentCount = data?.request_count || 0
+  const usage = data as ApiUsage | null
+  const currentCount = usage?.request_count || 0
   const remaining = Math.max(0, maxRequestsPerHour - currentCount)
 
   return {
@@ -221,7 +267,7 @@ export async function incrementApiUsage(
   userId: string,
   provider: string,
   endpoint: string
-) {
+): Promise<void> {
   const windowStart = new Date()
   windowStart.setMinutes(0, 0, 0)
   const windowEnd = new Date(windowStart.getTime() + 60 * 60 * 1000)
@@ -237,12 +283,14 @@ export async function incrementApiUsage(
     .lt('window_end', windowEnd.toISOString())
     .single()
 
-  if (existing) {
+  const existingUsage = existing as ApiUsage | null
+
+  if (existingUsage) {
     // Increment count
     await supabaseAdmin
       .from('api_usage')
-      .update({ request_count: existing.request_count + 1 })
-      .eq('id', existing.id)
+      .update({ request_count: existingUsage.request_count + 1 })
+      .eq('id', existingUsage.id)
   } else {
     // Create new record
     await supabaseAdmin.from('api_usage').insert({
@@ -257,9 +305,9 @@ export async function incrementApiUsage(
 }
 
 /**
- * Cleanup expired OAuth states (can be called by cron job)
+ * Cleanup expired OAuth states 
  */
-export async function cleanupExpiredOAuthStates() {
+export async function cleanupExpiredOAuthStates(): Promise<void> {
   const { error } = await supabaseAdmin.rpc('cleanup_expired_oauth_states')
 
   if (error) {
@@ -270,7 +318,7 @@ export async function cleanupExpiredOAuthStates() {
 /**
  * Cleanup old API usage records (can be called by cron job)
  */
-export async function cleanupOldApiUsage() {
+export async function cleanupOldApiUsage(): Promise<void> {
   const { error } = await supabaseAdmin.rpc('cleanup_old_api_usage')
 
   if (error) {

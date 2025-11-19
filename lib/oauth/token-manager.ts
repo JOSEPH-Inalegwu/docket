@@ -1,6 +1,7 @@
 import CryptoJS from 'crypto-js'
 
-const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY
+// ✅ Ensure ENCRYPTION_KEY is defined at build/runtime
+const ENCRYPTION_KEY: string = process.env.ENCRYPTION_KEY as string
 
 if (!ENCRYPTION_KEY) {
   throw new Error(
@@ -13,12 +14,13 @@ if (!ENCRYPTION_KEY) {
  * @param token - Plain text token to encrypt
  * @returns Encrypted token as base64 string
  */
-export function encryptToken(token: string): string {
+export function encryptToken(token?: string): string {
   if (!token) {
-    throw new Error('Token cannot be empty')
+    throw new Error('Token cannot be empty or undefined')
   }
 
   try {
+    // TypeScript now knows token and ENCRYPTION_KEY are strings
     const encrypted = CryptoJS.AES.encrypt(token, ENCRYPTION_KEY).toString()
     return encrypted
   } catch (error) {
@@ -32,9 +34,9 @@ export function encryptToken(token: string): string {
  * @param encryptedToken - Encrypted token as base64 string
  * @returns Decrypted plain text token
  */
-export function decryptToken(encryptedToken: string): string {
+export function decryptToken(encryptedToken?: string): string {
   if (!encryptedToken) {
-    throw new Error('Encrypted token cannot be empty')
+    throw new Error('Encrypted token cannot be empty or undefined')
   }
 
   try {
@@ -57,7 +59,9 @@ export function decryptToken(encryptedToken: string): string {
  * @param encryptedToken - Token to validate
  * @returns true if valid, false otherwise
  */
-export function isValidEncryptedToken(encryptedToken: string): boolean {
+export function isValidEncryptedToken(encryptedToken?: string): boolean {
+  if (!encryptedToken) return false
+
   try {
     const decrypted = decryptToken(encryptedToken)
     return decrypted.length > 0
@@ -73,13 +77,13 @@ export function isValidEncryptedToken(encryptedToken: string): boolean {
  */
 export function encryptTokens(tokens: Record<string, string>): Record<string, string> {
   const encrypted: Record<string, string> = {}
-  
+
   for (const [key, value] of Object.entries(tokens)) {
     if (value) {
       encrypted[key] = encryptToken(value)
     }
   }
-  
+
   return encrypted
 }
 
@@ -90,12 +94,12 @@ export function encryptTokens(tokens: Record<string, string>): Record<string, st
  */
 export function decryptTokens(encryptedTokens: Record<string, string>): Record<string, string> {
   const decrypted: Record<string, string> = {}
-  
+
   for (const [key, value] of Object.entries(encryptedTokens)) {
     if (value) {
       decrypted[key] = decryptToken(value)
     }
   }
-  
+
   return decrypted
 }
