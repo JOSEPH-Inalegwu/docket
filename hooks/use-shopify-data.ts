@@ -1,17 +1,16 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 
 interface ShopifyData {
   orders: any[]
   products: any[]
   analytics: any
   chartData: { date: string; revenue: number; orderCount: number }[]
-  isLoading: boolean
+  isLoading: boolean 
   error: string | null
   refetch: () => void
   lastSynced: Date | null
   chartDays: number
   setChartDays: (days: 30 | 90) => void
-  // NEW: Pagination data
   ordersPagination: {
     currentPage: number
     totalPages: number
@@ -26,6 +25,9 @@ interface ShopifyData {
   }
   handleOrdersPageChange: (page: number) => void
   handleProductsPageChange: (page: number) => void
+
+  ordersLoading: boolean
+  productsLoading: boolean
 }
 
 export function useShopifyData(limit: number = 10): ShopifyData {
@@ -34,26 +36,40 @@ export function useShopifyData(limit: number = 10): ShopifyData {
   const [analytics, setAnalytics] = useState<any>(null)
   const [chartData, setChartData] = useState<any[]>([])
   const [chartDays, setChartDays] = useState<30 | 90>(30)
+  
+  // Global loading only for initial mount
   const [isLoading, setIsLoading] = useState(true)
+  const isInitialLoad = useRef(true)
+  
+  // Per-section loading for pagination/filters
+  const [ordersLoading, setOrdersLoading] = useState(false)
+  const [productsLoading, setProductsLoading] = useState(false)
+  
   const [error, setError] = useState<string | null>(null)
   const [lastSynced, setLastSynced] = useState<Date | null>(null)
 
-  // Pagination state for orders
+  // Pagination state
   const [ordersPage, setOrdersPage] = useState(1)
   const [ordersTotalCount, setOrdersTotalCount] = useState(0)
   const ordersPerPage = 10
 
-  // Pagination state for products
   const [productsPage, setProductsPage] = useState(1)
   const [productsTotalCount, setProductsTotalCount] = useState(0)
   const productsPerPage = 10
 
   const fetchData = useCallback(async () => {
-    setIsLoading(true)
+    // Only show full-page loading on the very first fetch
+    if (isInitialLoad.current) {
+      setIsLoading(true)
+    } else {
+      // On subsequent fetches, show only section-level loaders
+      setOrdersLoading(true)
+      setProductsLoading(true)
+    }
+    
     setError(null)
 
     try {
-      // Fetch all data in parallel with pagination
       const [ordersRes, productsRes, analyticsRes, chartRes] = await Promise.all([
         fetch(`/api/shopify/orders?limit=${ordersPerPage}&page=${ordersPage}`),
         fetch(`/api/shopify/products?limit=${productsPerPage}&page=${productsPage}`),
@@ -70,7 +86,6 @@ export function useShopifyData(limit: number = 10): ShopifyData {
 
       if (ordersData.success) {
         setOrders(ordersData.orders)
-        // NEW: Set total count if API returns it
         if (ordersData.totalCount !== undefined) {
           setOrdersTotalCount(ordersData.totalCount)
         }
@@ -78,7 +93,6 @@ export function useShopifyData(limit: number = 10): ShopifyData {
       
       if (productsData.success) {
         setProducts(productsData.products)
-        // NEW: Set total count if API returns it
         if (productsData.totalCount !== undefined) {
           setProductsTotalCount(productsData.totalCount)
         }
@@ -92,15 +106,20 @@ export function useShopifyData(limit: number = 10): ShopifyData {
       setError(err instanceof Error ? err.message : 'Failed to fetch data')
       console.error('Error fetching Shopify data:', err)
     } finally {
-      setIsLoading(false)
+      // Clear all loading states
+      if (isInitialLoad.current) {
+        setIsLoading(false)
+        isInitialLoad.current = false
+      }
+      setOrdersLoading(false)
+      setProductsLoading(false)
     }
-  }, [chartDays, ordersPage, productsPage]) // Added ordersPage and productsPage
+  }, [chartDays, ordersPage, productsPage])
 
   useEffect(() => {
     fetchData()
   }, [fetchData])
 
-  // NEW: Page change handlers
   const handleOrdersPageChange = (page: number) => {
     setOrdersPage(page)
   }
@@ -114,13 +133,14 @@ export function useShopifyData(limit: number = 10): ShopifyData {
     products,
     analytics,
     chartData,
-    isLoading,
+    isLoading, 
+    ordersLoading, 
+    productsLoading, 
     error,
     refetch: fetchData,
     lastSynced,
     chartDays,
     setChartDays,
-    // NEW: Return pagination data
     ordersPagination: {
       currentPage: ordersPage,
       totalPages: Math.ceil(ordersTotalCount / ordersPerPage),

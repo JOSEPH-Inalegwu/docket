@@ -35,7 +35,9 @@ export default function ShopifyPage() {
     products,
     analytics,
     chartData,
-    isLoading: dataLoading,
+    isLoading: dataLoading, // only true on first load now
+    ordersLoading, // NEW: true when fetching orders page
+    productsLoading, // NEW: true when fetching products page
     error: dataError,
     refetch: refetchData,
     lastSynced,
@@ -72,7 +74,7 @@ export default function ShopifyPage() {
     return `https://admin.shopify.com/store/${shopName}`
   }
 
-  // Loading state
+  // Loading state - ONLY for connection check now
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
@@ -98,9 +100,7 @@ export default function ShopifyPage() {
           <h1 id="shopify-connection-error-title" className="text-xl font-semibold mb-2">
             Connection error
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mb-4">
-            {error}
-          </p>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">{error}</p>
           <button
             onClick={() => refetch()}
             className="px-6 py-2 bg-[#6c47ff] text-white rounded-lg hover:bg-[#5a38e6] transition-colors"
@@ -125,9 +125,8 @@ export default function ShopifyPage() {
         className="mx-auto w-full max-w-6xl px-0 md:px-4 py-4 md:py-6 space-y-6 md:space-y-8"
         aria-label="Shopify analytics dashboard"
       >
-        {/* Header with View in Shopify button */}
+        {/* Header - unchanged */}
         <header className="space-y-4">
-          {/* Top Row - Icon, Title, Button */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#95BF47]/20 flex items-center justify-center flex-shrink-0">
@@ -145,7 +144,6 @@ export default function ShopifyPage() {
               </div>
             </div>
 
-            {/* View in Shopify Button */}
             <button
               type="button"
               onClick={() => window.open(getShopifyAdminUrl(), '_blank', 'noopener,noreferrer')}
@@ -158,13 +156,11 @@ export default function ShopifyPage() {
             </button>
           </div>
 
-          {/* Last Synced & Refresh - Stack on mobile */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
               {connectionData?.connectedAt && (
                 <span>
-                  Connected on{' '}
-                  {new Date(connectionData.connectedAt).toLocaleDateString()}
+                  Connected on {new Date(connectionData.connectedAt).toLocaleDateString()}
                 </span>
               )}
               {lastSynced && (
@@ -175,18 +171,17 @@ export default function ShopifyPage() {
               )}
             </div>
 
-            {/* Refresh Button */}
             <button
               type="button"
               onClick={handleRefresh}
-              disabled={dataLoading}
+              disabled={dataLoading || ordersLoading || productsLoading}
               className="flex items-center justify-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 
                 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 w-full sm:w-auto"
               aria-label="Refresh Shopify analytics data"
             >
-              <RefreshCw className={`w-4 h-4 ${dataLoading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-4 h-4 ${dataLoading || ordersLoading || productsLoading ? 'animate-spin' : ''}`} />
               <span className="text-sm font-medium">
-                {dataLoading ? 'Refreshing…' : 'Refresh data'}
+                {dataLoading || ordersLoading || productsLoading ? 'Refreshing…' : 'Refresh data'}
               </span>
             </button>
           </div>
@@ -203,14 +198,12 @@ export default function ShopifyPage() {
               <h2 className="text-sm font-semibold text-red-800 dark:text-red-200">
                 Failed to load Shopify data
               </h2>
-              <p className="text-sm text-red-700 dark:text-red-300 break-words">
-                {dataError}
-              </p>
+              <p className="text-sm text-red-700 dark:text-red-300 break-words">{dataError}</p>
             </div>
           </section>
         )}
 
-        {/* 1. Analytics Metrics Grid */}
+        {/* 1. Analytics Metrics Grid - uses global dataLoading */}
         <section
           aria-label="Key Shopify metrics summary"
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6"
@@ -248,11 +241,7 @@ export default function ShopifyPage() {
           />
           <MetricCard
             title="Conversion rate"
-            value={
-              analytics?.conversionRate
-                ? `${analytics.conversionRate}%`
-                : '0%'
-            }
+            value={analytics?.conversionRate ? `${analytics.conversionRate}%` : '0%'}
             icon={TrendingUp}
             iconColor="#ef4444"
             subtitle="Store average"
@@ -260,7 +249,7 @@ export default function ShopifyPage() {
           />
         </section>
 
-        {/* 2. Revenue Chart - Full Width */}
+        {/* 2. Revenue Chart - uses global dataLoading */}
         <section aria-label="Revenue performance over time">
           <RevenueChart
             data={chartData}
@@ -270,25 +259,22 @@ export default function ShopifyPage() {
           />
         </section>
 
-        {/* 3. Quick Stats - Full Width Row */}
+        {/* 3. Quick Stats - uses global dataLoading */}
         <section aria-label="Shopify quick stats">
           <QuickStats analytics={analytics} isLoading={dataLoading} />
         </section>
 
-        {/* 4. Recent Orders Table */}
+        {/* 4. Recent Orders Table - NOW uses ordersLoading */}
         <section aria-label="Recent Shopify orders" className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <h2 className="text-lg sm:text-xl font-bold">
-              Recent orders
-            </h2>
+            <h2 className="text-lg sm:text-xl font-bold">Recent orders</h2>
             <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
               {ordersPagination.totalItems} total orders
             </span>
           </div>
 
-          {/* Table with horizontal scroll on mobile, without page overflow */}
           <div className="overflow-x-auto">
-            {dataLoading ? (
+            {ordersLoading ? (
               <div className="inline-block min-w-full align-middle">
                 <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
                   <table className="min-w-full table-auto" aria-busy="true">
@@ -388,7 +374,6 @@ export default function ShopifyPage() {
             )}
           </div>
 
-          {/* Pagination for Orders */}
           {orders.length > 0 && ordersPagination.totalPages > 1 && (
             <Pagination
               currentPage={ordersPagination.currentPage}
@@ -400,20 +385,17 @@ export default function ShopifyPage() {
           )}
         </section>
 
-        {/* 5. Products Table */}
+        {/* 5. Products Table - NOW uses productsLoading */}
         <section aria-label="Shopify products" className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <h2 className="text-lg sm:text-xl font-bold">
-              Products
-            </h2>
+            <h2 className="text-lg sm:text-xl font-bold">Products</h2>
             <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
               {productsPagination.totalItems} total products
             </span>
           </div>
 
-          {/* Table with horizontal scroll on mobile, without page overflow */}
           <div className="overflow-x-auto">
-            {dataLoading ? (
+            {productsLoading ? (
               <div className="inline-block min-w-full align-middle">
                 <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
                   <table className="min-w-full table-auto" aria-busy="true">
@@ -495,7 +477,6 @@ export default function ShopifyPage() {
             )}
           </div>
 
-          {/* Pagination for Products */}
           {products.length > 0 && productsPagination.totalPages > 1 && (
             <Pagination
               currentPage={productsPagination.currentPage}
