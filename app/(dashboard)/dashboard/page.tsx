@@ -3,11 +3,11 @@ import { useEffect, useState } from 'react'
 import { Plus } from 'lucide-react'
 import Link from 'next/link'
 import { tools } from '@/lib/tools-config'
+import { useConnections } from '@/hooks/use-connection'
 
 export default function DashboardPage() {
-  const connectedTools = tools.filter(tool => tool.isConnected)
-  const disconnectedTools = tools.filter(tool => !tool.isConnected)
-
+  const { isConnected, isLoading } = useConnections()
+  
   const [greeting, setGreeting] = useState("");
   const [time, setTime] = useState("");
   const [day, setDay] = useState("");
@@ -31,21 +31,46 @@ export default function DashboardPage() {
     else setGreeting("Good Night");
   }, []);
 
+  // Map tools with real connection status
+  const toolsWithStatus = tools.map((tool) => ({
+    ...tool,
+    isConnected: isConnected(tool.id),
+  }))
+
+  const connectedTools = toolsWithStatus.filter(tool => tool.isConnected)
+  const disconnectedTools = toolsWithStatus.filter(tool => !tool.isConnected)
+
+  if (isLoading) {
+    return (
+      <div className="space-y-12">
+        <div className="space-y-2 mb-8">
+          <div className="h-4 w-48 bg-gray-200 dark:bg-gray-800 rounded animate-pulse" />
+          <div className="h-8 w-96 bg-gray-200 dark:bg-gray-800 rounded animate-pulse" />
+          <div className="h-4 w-64 bg-gray-200 dark:bg-gray-800 rounded animate-pulse" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-32 bg-gray-200 dark:bg-gray-800 rounded-lg animate-pulse" />
+          ))}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-12">
       {/* Welcome Header */}
       <div className="space-y-2 mb-8">
-      <p className="text-sm text-gray-500 dark:text-gray-400">
-        {day}, {time} — {greeting}
-      </p>
-      <h1 className="text-3xl font-bold">
-        Welcome to Docket, Joseph!
-      </h1>
-      <p className="text-gray-600 dark:text-gray-400">
-        Connect your e-commerce tools to see all your metrics in one place
-      </p>
-    </div>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          {day}, {time} — {greeting}
+        </p>
+        <h1 className="text-3xl font-bold">
+          Welcome to Docket, Joseph!
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400">
+          Connect your e-commerce tools to see all your metrics in one place
+        </p>
+      </div>
 
       {/* Connected Tools Section */}
       {connectedTools.length > 0 ? (
@@ -60,14 +85,19 @@ export default function DashboardPage() {
                   href={tool.href}
                   className="p-6 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-[#6c47ff] dark:hover:border-[#6c47ff] transition-all hover:shadow-md"
                 >
-                  <div className="flex items-center gap-3 mb-3">
-                    <div 
-                      className="p-3 rounded-lg"
-                      style={{ backgroundColor: tool.color + '20' }}
-                    >
-                      <Icon className="w-6 h-6" style={{ color: tool.color }} />
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div 
+                        className="p-3 rounded-lg"
+                        style={{ backgroundColor: tool.color + '20' }}
+                      >
+                        <Icon className="w-6 h-6" style={{ color: tool.color }} />
+                      </div>
+                      <h3 className="font-semibold">{tool.name}</h3>
                     </div>
-                    <h3 className="font-semibold">{tool.name}</h3>
+                    <span className="text-xs px-2 py-1 rounded-full bg-green-200 dark:bg-green-900/30 text-green-700 dark:text-green-400">
+                      Connected
+                    </span>
                   </div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     View metrics and analytics

@@ -1,3 +1,4 @@
+'use client'
 import { useState, useEffect } from 'react'
 
 interface ConnectionStatus {
@@ -119,5 +120,65 @@ export function useConnection(provider: string): UseConnectionReturn {
     connectionData,
     refetch: fetchConnectionStatus,
     disconnect,
+  }
+}
+
+// ... keep your existing useConnection hook above ...
+
+/**
+ * Hook to fetch ALL connection statuses at once
+ * More efficient for sidebar/dashboard that shows multiple providers
+ */
+export function useConnections() {
+  const [connections, setConnections] = useState<Record<string, ConnectionStatus>>({})
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  const fetchConnections = async () => {
+    try {
+      setIsLoading(true)
+      setError(null)
+
+      console.log('🔍 useConnections - Fetching all connections')
+
+      const response = await fetch('/api/connections')
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch connections: ${response.status}`)
+      }
+
+      const data = await response.json()
+
+      console.log('🔍 useConnections - API Response:', data)
+
+      setConnections(data.connections || {})
+    } catch (err) {
+      console.error('❌ useConnections - Error:', err)
+      setError(err instanceof Error ? err.message : 'Unknown error')
+      setConnections({})
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchConnections()
+  }, [])
+
+  const isConnected = (provider: string): boolean => {
+    return connections[provider]?.isConnected ?? false
+  }
+
+  const getConnection = (provider: string): ConnectionStatus | null => {
+    return connections[provider] || null
+  }
+
+  return {
+    connections,
+    isLoading,
+    error,
+    isConnected,
+    getConnection,
+    refetch: fetchConnections,
   }
 }

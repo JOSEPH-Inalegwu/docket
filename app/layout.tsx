@@ -1,4 +1,5 @@
 import { type Metadata } from 'next'
+import { Toaster } from '@/components/ui/sonner'
 import { ClerkProvider } from '@clerk/nextjs'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
@@ -29,6 +30,7 @@ export default function RootLayout({
       <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
         <body className={`${geistSans.className} antialiased`}>
           {children}
+          <Toaster position="top-right" />
         </body>
       </html>
     </ClerkProvider>
