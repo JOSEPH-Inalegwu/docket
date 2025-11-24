@@ -13,20 +13,24 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Get limit from query params (default 10)
+    // Get pagination params from query
     const searchParams = request.nextUrl.searchParams
     const limit = parseInt(searchParams.get('limit') || '10')
+    const page = parseInt(searchParams.get('page') || '1')
 
     // Create Shopify client from user's connection
     const client = await ShopifyClient.fromConnection(userId)
 
-    // Fetch orders
-    const orders = await client.getOrders(limit)
+    // Fetch orders with pagination
+    const { orders, totalCount } = await client.getOrders(limit, page)
 
     return NextResponse.json({
       success: true,
       orders,
       count: orders.length,
+      totalCount,
+      currentPage: page, 
+      totalPages: Math.ceil(totalCount / limit), 
     })
   } catch (error) {
     console.error('Shopify orders API error:', error)

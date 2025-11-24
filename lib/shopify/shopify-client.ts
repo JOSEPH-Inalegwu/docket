@@ -112,11 +112,13 @@ export class ShopifyClient {
   /**
    * Fetch orders from Shopify
    */
-  async getOrders(limit: number = 10): Promise<ShopifyOrder[]> {
+  async getOrders(limit: number = 10, page: number = 1): Promise<{ orders: ShopifyOrder[], totalCount: number }> {
+  // Main query with pagination
   const query = `
-    query GetOrders($limit: Int!) {
-      orders(first: $limit, sortKey: CREATED_AT, reverse: true) {
+    query GetOrders($limit: Int!, $after: String) {
+      orders(first: $limit, after: $after, sortKey: CREATED_AT, reverse: true) {
         edges {
+          cursor
           node {
             id
             name
@@ -144,14 +146,50 @@ export class ShopifyClient {
         }
       }
     }
-  `
+  `;
 
-  const data = await this.graphql<any>(query, { limit })
+  // Separate query to get total count (fetch max 250 to count)
+  const countQuery = `
+    query GetOrdersCount {
+      orders(first: 250, sortKey: CREATED_AT, reverse: true) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+    }
+  `;
 
-  return data.orders.edges.map((edge: any) => ({
+  // Calculate cursor for pagination
+  let cursor = null;
+  if (page > 1) {
+    const skipCount = (page - 1) * limit;
+    const skipQuery = `
+      query SkipOrders($skip: Int!) {
+        orders(first: $skip, sortKey: CREATED_AT, reverse: true) {
+          edges {
+            cursor
+          }
+        }
+      }
+    `;
+    const skipData = await this.graphql<any>(skipQuery, { skip: skipCount });
+    if (skipData?.orders?.edges?.length > 0) {
+      cursor = skipData.orders.edges[skipData.orders.edges.length - 1].cursor;
+    }
+  }
+
+  // Fetch both in parallel
+  const [data, countData] = await Promise.all([
+    this.graphql<any>(query, { limit, after: cursor }),
+    this.graphql<any>(countQuery)
+  ]);
+
+  const orders = data.orders.edges.map((edge: any) => ({
     id: edge.node.id,
-    orderNumber: edge.node.name, 
-    customerName: edge.node.customer?.displayName || 'Guest', 
+    orderNumber: edge.node.name,
+    customerName: edge.node.customer?.displayName || 'Guest',
     email: edge.node.email,
     createdAt: edge.node.createdAt,
     totalPrice: edge.node.totalPriceSet.shopMoney.amount,
@@ -159,18 +197,25 @@ export class ShopifyClient {
     financialStatus: edge.node.displayFinancialStatus,
     fulfillmentStatus: edge.node.displayFulfillmentStatus,
     lineItemsCount: edge.node.lineItems.edges.length,
-  }))
+  }));
+
+  // Real total count from Shopify
+  const totalCount = countData?.orders?.edges?.length || 0;
+
+  return { orders, totalCount };
   }
 
-
-  /**
-   * Fetch products from Shopify
-   */
-  async getProducts(limit: number = 10): Promise<ShopifyProduct[]> {
+  async getProducts(limit: number = 10, page: number = 1): Promise<{ products: ShopifyProduct[], totalCount: number }> {
+    // Main query with pagination
     const query = `
-      query GetProducts($limit: Int!) {
-        products(first: $limit, sortKey: CREATED_AT, reverse: true) {
+      query GetProducts($limit: Int!, $after: String) {
+        products(first: $limit, after: $after, sortKey: CREATED_AT, reverse: true) {
+          pageInfo {
+            hasNextPage
+            hasPreviousPage
+          }
           edges {
+            cursor
             node {
               id
               title
@@ -190,11 +235,47 @@ export class ShopifyClient {
           }
         }
       }
-    `
+    `;
 
-    const data = await this.graphql<any>(query, { limit })
+    // Separate query to get total count
+    const countQuery = `
+      query GetProductsCount {
+        products(first: 250, sortKey: CREATED_AT, reverse: true) {
+          edges {
+            node {
+              id
+            }
+          }
+        }
+      }
+    `;
 
-    return data.products.edges.map((edge: any) => ({
+    // Calculate cursor for pagination
+    let cursor = null;
+    if (page > 1) {
+      const skipCount = (page - 1) * limit;
+      const skipQuery = `
+        query SkipProducts($skip: Int!) {
+          products(first: $skip, sortKey: CREATED_AT, reverse: true) {
+            edges {
+              cursor
+            }
+          }
+        }
+      `;
+      const skipData = await this.graphql<any>(skipQuery, { skip: skipCount });
+      if (skipData?.products?.edges?.length > 0) {
+        cursor = skipData.products.edges[skipData.products.edges.length - 1].cursor;
+      }
+    }
+
+    // Fetch both in parallel
+    const [data, countData] = await Promise.all([
+      this.graphql<any>(query, { limit, after: cursor }),
+      this.graphql<any>(countQuery)
+    ]);
+
+    const products = data.products.edges.map((edge: any) => ({
       id: edge.node.id,
       title: edge.node.title,
       status: edge.node.status,
@@ -205,15 +286,17 @@ export class ShopifyClient {
         price: v.node.price,
         inventoryQuantity: v.node.inventoryQuantity,
       })),
-    }))
+    }));
+
+    // Real total count from Shopify
+    const totalCount = countData?.products?.edges?.length || 0;
+
+    return { products, totalCount };
   }
 
   /**
    * Get analytics/summary data
    */
-  /**
- * Get analytics/summary data
- */
   async getAnalytics(): Promise<ShopifyAnalytics> {
     if (USE_MOCK_DATA) {
       return {

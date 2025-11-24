@@ -8,7 +8,7 @@ interface ChartWrapperProps {
   actions?: ReactNode
   children: ReactNode
   loading?: boolean
-  height?: string
+  height?: string // Tailwind height class
 }
 
 export default function ChartWrapper({
@@ -17,28 +17,30 @@ export default function ChartWrapper({
   actions,
   children,
   loading = false,
-  height = 'h-80'
+  height = 'h-64 sm:h-80',
 }: ChartWrapperProps) {
   if (loading) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-        <div className="flex items-start justify-between mb-6">
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between mb-4 sm:mb-6">
           <div className="space-y-2">
-            <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-40 animate-pulse"></div>
-            {subtitle && <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-56 animate-pulse"></div>}
+            <div className="h-5 sm:h-6 bg-gray-200 dark:bg-gray-700 rounded w-32 sm:w-40 animate-pulse" />
+            {subtitle && (
+              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-44 sm:w-56 animate-pulse" />
+            )}
           </div>
         </div>
-        <div className={`${height} bg-gray-100 dark:bg-gray-900 rounded-lg animate-pulse`}></div>
+        <div className={`${height} bg-gray-100 dark:bg-gray-900 rounded-lg animate-pulse`} />
       </div>
     )
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
       {/* Header */}
-      <div className="flex items-start justify-between mb-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between mb-4 sm:mb-6">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-1">
             {title}
           </h3>
           {subtitle && (
@@ -48,14 +50,14 @@ export default function ChartWrapper({
           )}
         </div>
         {actions && (
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {actions}
           </div>
         )}
       </div>
 
       {/* Chart Content */}
-      <div className={height}>
+      <div className={`${height} w-full overflow-hidden`}>
         {children}
       </div>
     </div>

@@ -163,6 +163,7 @@ export default function DashboardSidebar() {
       <aside
         className={`
           fixed top-16 left-0 z-50 h-[calc(100vh-4rem)] w-64 
+          overflow-x-hidden
           transform border-r border-gray-200 dark:border-gray-800
           bg-white dark:bg-gray-950 
           transition-transform duration-300 ease-in-out
