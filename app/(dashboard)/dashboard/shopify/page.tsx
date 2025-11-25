@@ -77,7 +77,7 @@ export default function ShopifyPage() {
   // Loading state - ONLY for connection check now
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-800 flex items-center justify-center">
         <div className="text-center" aria-busy="true" aria-live="polite">
           <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4 text-[#6c47ff]" />
           <p className="text-gray-600 dark:text-gray-400">
@@ -120,7 +120,7 @@ export default function ShopifyPage() {
 
   // Connected - show dashboard with real data
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-screen bg-gray-50 dark:bg-transparent">
       <main
         className="mx-auto w-full max-w-6xl px-0 md:px-4 py-4 md:py-6 space-y-6 md:space-y-8"
         aria-label="Shopify analytics dashboard"
