@@ -9,7 +9,7 @@ interface ShopifyData {
   error: string | null
   refetch: () => void
   lastSynced: Date | null
-  chartDays: number
+  chartDays: 30 | 90
   setChartDays: (days: 30 | 90) => void
   ordersPagination: {
     currentPage: number

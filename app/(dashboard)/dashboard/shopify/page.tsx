@@ -254,7 +254,7 @@ export default function ShopifyPage() {
           <RevenueChart
             data={chartData}
             isLoading={dataLoading}
-            days={chartDays}
+            days={chartDays as 30 | 90 }
             onDaysChange={setChartDays}
           />
         </section>
