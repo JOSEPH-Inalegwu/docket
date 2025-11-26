@@ -50,11 +50,14 @@ export default function DashboardPage() {
     else setGreeting("Good Night");
   }, []);
 
-  // Map tools with real connection status
-  const toolsWithStatus = tools.map((tool) => ({
-    ...tool,
-    isConnected: isConnected(tool.id),
-  }))
+  // Map tools with real connection status (exclude utility items like Settings)
+  const toolsWithStatus = tools
+    .filter(tool => !tool.isUtility)
+    .map((tool) => ({
+      ...tool,
+      isConnected: isConnected(tool.id),
+    }))
+
 
   const connectedTools = toolsWithStatus.filter(tool => tool.isConnected)
   const disconnectedTools = toolsWithStatus.filter(tool => !tool.isConnected)
