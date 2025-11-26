@@ -3,6 +3,7 @@
 import { Tool } from '@/lib/tools-config'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { Settings } from 'lucide-react'
 
 interface ToolItemProps {
   tool: Tool
@@ -57,11 +58,12 @@ export default function ToolItem({ tool, onToolClick }: ToolItemProps) {
         <span className="font-medium text-sm">{tool.name}</span>
       </div>
 
-      {/* Connection Status Badge */}
+      {/* Connection Status Badge with Icon */}
       {!tool.isConnected && (
-        <span className="text-xs px-2 py-0.5 rounded-full bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400">
-          Setup
-        </span>
+        <div className="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400">
+          <Settings className="w-3 h-3" />
+          <span>Setup</span>
+        </div>
       )}
     </div>
   )

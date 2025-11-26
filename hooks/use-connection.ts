@@ -47,32 +47,24 @@ export function useConnection(provider: string): UseConnectionReturn {
       
       console.log('🔍 useConnection - API Response:', data)
       
-      // ✅ FIX: Check both response structures
-      const connected = data.isConnected === true
+      // ✅ FIX: Check the correct field name from API
+      const connected = data.connected === true
       
       setIsConnected(connected)
       
-      // ✅ FIX: Handle both response structures
-      if (data.connectionData) {
-        // New structure with connectionData object
+      // ✅ FIX: Use the connection object from API response
+      if (connected && data.connection) {
         setConnectionData({
           isConnected: connected,
-          provider: data.provider,
-          connectedAt: data.connectionData.connectedAt,
-          shopDomain: data.connectionData.shopDomain,
-          isExpired: data.isExpired,
-          metadata: data.metadata
+          provider: provider,
+          connectedAt: data.connection.connected_at,
+          lastSyncedAt: data.connection.last_synced_at,
+          shopDomain: data.connection.shop_domain,
+          isExpired: false,
+          metadata: data.connection.metadata
         })
       } else {
-        // Old structure with flat response
-        setConnectionData({
-          isConnected: connected,
-          provider: data.provider,
-          connectedAt: data.connectedAt,
-          shopDomain: data.shopDomain,
-          isExpired: data.isExpired,
-          metadata: data.metadata
-        })
+        setConnectionData(null)
       }
       
     } catch (err) {
@@ -122,8 +114,6 @@ export function useConnection(provider: string): UseConnectionReturn {
     disconnect,
   }
 }
-
-// ... keep your existing useConnection hook above ...
 
 /**
  * Hook to fetch ALL connection statuses at once
