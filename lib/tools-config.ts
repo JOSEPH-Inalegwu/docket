@@ -1,4 +1,4 @@
-import { ShoppingBag, Package, ShoppingCart, TrendingUp } from 'lucide-react'
+import { ShoppingBag, Package, ShoppingCart, TrendingUp, Settings } from 'lucide-react'
 import { LucideIcon } from 'lucide-react'
 
 export interface Tool {
@@ -8,7 +8,8 @@ export interface Tool {
   icon: LucideIcon
   color: string
   isConnected: boolean
-  dashboardUrl?: string  // External platform dashboard URL
+  dashboardUrl?: string  
+  isUtility?: boolean
 }
 
 // This would eventually come from your database/API
@@ -20,7 +21,7 @@ export const tools: Tool[] = [
     icon: ShoppingBag,
     color: '#96bf48',
     isConnected: false,
-    dashboardUrl: 'https://admin.shopify.com', // Will be dynamic based on shop domain
+    dashboardUrl: 'https://admin.shopify.com',
   },
   {
     id: 'amazon',
@@ -49,4 +50,13 @@ export const tools: Tool[] = [
     isConnected: false,
     dashboardUrl: 'https://dashboard.stripe.com',
   },
+  {
+    id: 'settings',
+    name: 'Settings',
+    href: '/dashboard/settings',
+    icon: Settings,
+    color: '#4c4f54',
+    isConnected: true,
+    isUtility: true,
+  }
 ]

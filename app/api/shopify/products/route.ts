@@ -24,6 +24,20 @@ export async function GET(request: NextRequest) {
     // Fetch products with pagination
     const { products, totalCount } = await client.getProducts(limit, page)
 
+    // Trigger notification check in background (fire-and-forget)
+    // Only trigger on first page to avoid duplicate checks
+    if (page === 1) {
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 
+                      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+      
+      fetch(`${baseUrl}/api/notifications/check`, {
+        method: 'POST',
+        headers: {
+          'Cookie': request.headers.get('cookie') || '',
+        },
+      }).catch(err => console.error('Background notification check failed:', err))
+    }
+
     return NextResponse.json({
       success: true,
       products,

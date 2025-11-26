@@ -72,7 +72,7 @@ export default function MetricCard({
         </h3>
         {Icon && (
           <div
-            className="p-2 rounded-lg flex-shrink-0"
+            className="p-2 rounded-lg shrink-0"
             style={{ backgroundColor: iconColor + '20' }}
           >
             <Icon className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: iconColor }} />
