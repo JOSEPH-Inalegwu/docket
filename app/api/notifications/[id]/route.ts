@@ -7,7 +7,7 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
-export async function PATCH(
+export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
@@ -20,21 +20,21 @@ export async function PATCH(
 
     const { id } = await params 
 
-    // Mark as read
+    // Delete notification (only user's own)
     const { error } = await supabase
       .from('notifications')
-      .update({ is_read: true })
+      .delete()
       .eq('id', id)
       .eq('user_id', userId)
 
     if (error) {
-      console.error('Error marking notification as read:', error)
-      return NextResponse.json({ error: 'Failed to update notification' }, { status: 500 })
+      console.error('Error deleting notification:', error)
+      return NextResponse.json({ error: 'Failed to delete notification' }, { status: 500 })
     }
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Notification PATCH error:', error)
+    console.error('Notification DELETE error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

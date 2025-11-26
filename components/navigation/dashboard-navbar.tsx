@@ -103,6 +103,47 @@ export default function DashboardNavbar() {
     }
   }
 
+  const deleteNotification = async (notificationId: string) => {
+    try {
+      const res = await fetch(`/api/notifications/${notificationId}`, {
+        method: 'DELETE',
+      })
+      
+      if (res.ok) {
+        // Remove from local state
+        const deletedNotif = notifications.find(n => n.id === notificationId)
+        setNotifications(prev => prev.filter(n => n.id !== notificationId))
+        
+        // Decrease unread count if it was unread
+        if (deletedNotif && !deletedNotif.is_read) {
+          setUnreadCount(prev => Math.max(0, prev - 1))
+        }
+      }
+    } catch (error) {
+      console.error('Error deleting notification:', error)
+    }
+  }
+
+  const deleteAllNotifications = async () => {
+    setIsLoading(true)
+    try {
+      // Delete all notifications one by one
+      await Promise.all(
+        notifications.map(notification => 
+          fetch(`/api/notifications/${notification.id}`, { method: 'DELETE' })
+        )
+      )
+      
+      // Clear local state
+      setNotifications([])
+      setUnreadCount(0)
+    } catch (error) {
+      console.error('Error deleting all notifications:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const formatTimeAgo = (dateString: string) => {
     const now = new Date()
     const date = new Date(dateString)
@@ -154,15 +195,26 @@ export default function DashboardNavbar() {
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
                   <h3 className="font-semibold text-lg">Notifications</h3>
-                  {unreadCount > 0 && (
-                    <button
-                      onClick={markAllAsRead}
-                      disabled={isLoading}
-                      className="text-xs text-[#6c47ff] hover:underline disabled:opacity-50"
-                    >
-                      Mark all read
-                    </button>
-                  )}
+                  <div className="flex items-center gap-3">
+                    {unreadCount > 0 && (
+                      <button
+                        onClick={markAllAsRead}
+                        disabled={isLoading}
+                        className="text-xs text-[#6c47ff] hover:underline disabled:opacity-50"
+                      >
+                        Mark all read
+                      </button>
+                    )}
+                    {notifications.length > 0 && (
+                      <button
+                        onClick={deleteAllNotifications}
+                        disabled={isLoading}
+                        className="text-xs text-red-600 dark:text-red-400 hover:underline disabled:opacity-50"
+                      >
+                        Delete all
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 {/* Notification List */}
@@ -176,13 +228,15 @@ export default function DashboardNavbar() {
                     notifications.map((notification) => (
                       <div
                         key={notification.id}
-                        onClick={() => !notification.is_read && markAsRead(notification.id)}
-                        className={`p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer ${
+                        className={`p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors ${
                           !notification.is_read ? 'bg-blue-50/50 dark:bg-blue-900/10' : ''
                         }`}
                       >
                         <div className="flex items-start justify-between gap-3">
-                          <div className="flex-1 min-w-0">
+                          <div 
+                            onClick={() => !notification.is_read && markAsRead(notification.id)}
+                            className="flex-1 min-w-0 cursor-pointer"
+                          >
                             <p className="text-sm font-medium text-gray-900 dark:text-white">
                               {notification.product_name}
                             </p>
@@ -193,9 +247,21 @@ export default function DashboardNavbar() {
                               {formatTimeAgo(notification.created_at)}
                             </p>
                           </div>
-                          {!notification.is_read && (
-                            <div className="w-2 h-2 bg-[#6c47ff] rounded-full flex-shrink-0 mt-1"></div>
-                          )}
+                          <div className="flex items-center gap-2 shrink-0">
+                            {!notification.is_read && (
+                              <div className="w-2 h-2 bg-[#6c47ff] rounded-full"></div>
+                            )}
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                deleteNotification(notification.id)
+                              }}
+                              className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
+                              aria-label="Delete notification"
+                            >
+                              <X className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ))

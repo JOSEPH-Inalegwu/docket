@@ -76,9 +76,16 @@ export async function POST() {
           .eq('shopify_product_id', product.id.toString())
           .single()
 
-        // Skip if we notified recently
-        if (existingState?.last_notified_at && existingState.last_notified_at > oneDayAgo) {
-          continue
+        // Skip if we notified recently (within last 24 hours)
+        if (existingState?.last_notified_at) {
+          const lastNotified = new Date(existingState.last_notified_at)
+          const timeSinceNotification = Date.now() - lastNotified.getTime()
+          const twentyFourHours = 24 * 60 * 60 * 1000
+          
+          if (timeSinceNotification < twentyFourHours) {
+            console.log(`Skipping ${product.title} - notified ${Math.round(timeSinceNotification / 1000 / 60)} minutes ago`)
+            continue
+          }
         }
 
         // Create notification
