@@ -37,6 +37,9 @@ export function useShopifyData(limit: number = 10): ShopifyData {
   const [chartData, setChartData] = useState<any[]>([])
   const [chartDays, setChartDays] = useState<30 | 90>(30)
   
+  // Skip fetching if limit is 0 (disconnected state)
+  const shouldFetch = limit > 0
+  
   // Global loading only for initial mount
   const [isLoading, setIsLoading] = useState(true)
   const isInitialLoad = useRef(true)
@@ -58,6 +61,13 @@ export function useShopifyData(limit: number = 10): ShopifyData {
   const productsPerPage = 10
 
   const fetchData = useCallback(async () => {
+    // Skip if not connected
+    if (!shouldFetch) {
+      setIsLoading(false)
+      isInitialLoad.current = false
+      return
+    }
+
     // Only show full-page loading on the very first fetch
     if (isInitialLoad.current) {
       setIsLoading(true)
@@ -114,7 +124,7 @@ export function useShopifyData(limit: number = 10): ShopifyData {
       setOrdersLoading(false)
       setProductsLoading(false)
     }
-  }, [chartDays, ordersPage, productsPage])
+  }, [chartDays, ordersPage, productsPage, shouldFetch]) 
 
   useEffect(() => {
     fetchData()
@@ -157,3 +167,4 @@ export function useShopifyData(limit: number = 10): ShopifyData {
     handleProductsPageChange,
   }
 }
+

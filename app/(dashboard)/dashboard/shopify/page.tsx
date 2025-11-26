@@ -35,9 +35,9 @@ export default function ShopifyPage() {
     products,
     analytics,
     chartData,
-    isLoading: dataLoading, // only true on first load now
-    ordersLoading, // NEW: true when fetching orders page
-    productsLoading, // NEW: true when fetching products page
+    isLoading: dataLoading,
+    ordersLoading,
+    productsLoading,
     error: dataError,
     refetch: refetchData,
     lastSynced,
@@ -47,7 +47,7 @@ export default function ShopifyPage() {
     handleProductsPageChange,
     chartDays,
     setChartDays,
-  } = useShopifyData(6)
+  } = useShopifyData(isConnected ? 6 : 0)
 
   // Check for successful connection from OAuth callback
   useEffect(() => {
@@ -63,6 +63,13 @@ export default function ShopifyPage() {
     }
   }, [searchParams, refetch, router])
 
+  // Redirect to dashboard if not connected
+  useEffect(() => {
+    if (!isLoading && !isConnected) {
+      router.push('/dashboard')
+    }
+  }, [isConnected, isLoading, router])
+
   const handleRefresh = async () => {
     console.log('🔄 Manual refresh triggered')
     await refetchData()
@@ -74,7 +81,7 @@ export default function ShopifyPage() {
     return `https://admin.shopify.com/store/${shopName}`
   }
 
-  // Loading state - ONLY for connection check now
+  // Loading state
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-800 flex items-center justify-center">
@@ -112,9 +119,8 @@ export default function ShopifyPage() {
     )
   }
 
-  // Not connected - redirect to dashboard
+  // Not connected - will redirect via useEffect
   if (!isConnected) {
-    router.push('/dashboard')
     return null
   }
 
@@ -125,7 +131,7 @@ export default function ShopifyPage() {
         className="mx-auto w-full max-w-6xl px-0 md:px-4 py-4 md:py-6 space-y-6 md:space-y-8"
         aria-label="Shopify analytics dashboard"
       >
-        {/* Header - unchanged */}
+        {/* Header */}
         <header className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -203,7 +209,7 @@ export default function ShopifyPage() {
           </section>
         )}
 
-        {/* 1. Analytics Metrics Grid - uses global dataLoading */}
+        {/* 1. Analytics Metrics Grid */}
         <section
           aria-label="Key Shopify metrics summary"
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6"
@@ -249,7 +255,7 @@ export default function ShopifyPage() {
           />
         </section>
 
-        {/* 2. Revenue Chart - uses global dataLoading */}
+        {/* 2. Revenue Chart */}
         <section aria-label="Revenue performance over time">
           <RevenueChart
             data={chartData}
@@ -259,12 +265,12 @@ export default function ShopifyPage() {
           />
         </section>
 
-        {/* 3. Quick Stats - uses global dataLoading */}
+        {/* 3. Quick Stats */}
         <section aria-label="Shopify quick stats">
           <QuickStats analytics={analytics} isLoading={dataLoading} />
         </section>
 
-        {/* 4. Recent Orders Table - NOW uses ordersLoading */}
+        {/* 4. Recent Orders Table */}
         <section aria-label="Recent Shopify orders" className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <h2 className="text-lg sm:text-xl font-bold">Recent orders</h2>
@@ -385,7 +391,7 @@ export default function ShopifyPage() {
           )}
         </section>
 
-        {/* 5. Products Table - NOW uses productsLoading */}
+        {/* 5. Products Table */}
         <section aria-label="Shopify products" className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <h2 className="text-lg sm:text-xl font-bold">Products</h2>
