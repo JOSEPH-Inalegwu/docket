@@ -51,29 +51,45 @@ export async function POST() {
       })
     }
 
-    // 3. Use ShopifyClient to fetch products
+    // 3. Fetch products with full inventory data using GraphQL
     const client = await ShopifyClient.fromConnection(userId)
-    const { products } = await client.getProducts(250, 1) // Get all products (up to 250)
+
+    const inventoryQuery = `
+      query GetProductsWithInventory {
+        products(first: 250) {
+          edges {
+            node {
+              id
+              title
+              totalInventory
+            }
+          }
+        }
+      }
+    `
+
+    const response: any = await client.graphqlRequest(inventoryQuery)
+    const products = response.products.edges.map((edge: any) => edge.node)
 
     let notificationsCreated = 0
 
     // 4. Check each product against threshold
     for (const product of products) {
-      const totalInventory = product.variants.reduce(
-        (sum: number, variant: any) => sum + (variant.inventory_quantity || 0),
-        0
-      )
+      const totalInventory = product.totalInventory || 0
+
+      console.log(`Checking ${product.title}: ${totalInventory} items (threshold: ${threshold})`)
 
       // Only create notification if stock is low
       if (totalInventory <= threshold) {
-        // Check if already notified about this product in last 24 hours
-        const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+        // Extract numeric ID from GraphQL ID (gid://shopify/Product/123456 -> 123456)
+        const productId = product.id.split('/').pop()
 
+        // Check if already notified about this product in last 24 hours
         const { data: existingState } = await supabase
           .from('product_notification_state')
           .select('*')
           .eq('user_id', userId)
-          .eq('shopify_product_id', product.id.toString())
+          .eq('shopify_product_id', productId)
           .single()
 
         // Skip if we notified recently (within last 24 hours)
@@ -88,12 +104,27 @@ export async function POST() {
           }
         }
 
+        // Check if unread notification already exists for this product
+        const { data: existingNotification } = await supabase
+          .from('notifications')
+          .select('id')
+          .eq('user_id', userId)
+          .eq('product_id', productId)
+          .eq('is_read', false)
+          .single()
+
+        // Skip if unread notification already exists
+        if (existingNotification) {
+          console.log(`Skipping ${product.title} - unread notification already exists`)
+          continue
+        }
+
         // Create notification
         const { error: notifError } = await supabase
           .from('notifications')
           .insert({
             user_id: userId,
-            product_id: product.id.toString(),
+            product_id: productId,
             product_name: product.title,
             type: 'LOW_STOCK',
             title: 'Low Stock Alert',
@@ -114,7 +145,7 @@ export async function POST() {
           .upsert(
             {
               user_id: userId,
-              shopify_product_id: product.id.toString(),
+              shopify_product_id: productId,
               product_name: product.title,
               last_notified_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
@@ -125,6 +156,7 @@ export async function POST() {
           )
 
         notificationsCreated++
+        console.log(`✅ Created notification for ${product.title} (${totalInventory} items)`)
       }
     }
 

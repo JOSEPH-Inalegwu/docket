@@ -612,6 +612,13 @@ export class ShopifyClient {
   }
 
   /**
+   * Public method to make GraphQL requests
+  */
+  async graphqlRequest(query: string, variables?: any) {
+    return await this.graphql(query, variables)
+  }
+
+  /**
    * Static factory method to create client from database connection
    */
   static async fromConnection(userId: string): Promise<ShopifyClient> {
