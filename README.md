@@ -6,7 +6,7 @@
 
 > **🚀 Building in Public** | A learning project showcasing modern SaaS development with Next.js 15, TypeScript, and Supabase.
 
-[View Demo](#-screenshots) · [Report Bug](https://github.com/JOSEPH-Inalegwu/docket/issues) · [Request Feature](https://github.com/JOSEPH-Inalegwu/docket/issues)
+[View Demo](https://my-docket.vercel.app) · [Report Bug](https://github.com/JOSEPH-Inalegwu/docket/issues) · [Request Feature](https://github.com/JOSEPH-Inalegwu/docket/issues)
 
 [![Built with Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
