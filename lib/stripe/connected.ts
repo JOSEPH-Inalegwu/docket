@@ -9,9 +9,7 @@ if (!STRIPE_PLATFORM_SECRET_KEY) {
   throw new Error('STRIPE_PLATFORM_SECRET_KEY is not set')
 }
 
-const stripe = new Stripe(STRIPE_PLATFORM_SECRET_KEY, {
-  apiVersion: '2023-10-16',
-})
+const stripe = new Stripe(STRIPE_PLATFORM_SECRET_KEY, {})
 
 export async function getConnectedStripeBalance(userId: string) {
   const connection = await getToolConnection(userId, 'stripe')
@@ -51,12 +49,12 @@ export async function getConnectedStripeSummary(userId: string) {
   // Fetch all needed data in parallel, acting on behalf of the connected account.
   const [balance, charges, customers, products, subscriptions] = await Promise.all([
     stripe.balance.retrieve({ stripeAccount: stripeUserId }),
-    stripe.charges.list({ limit: 10, stripeAccount: stripeUserId }),
-    stripe.customers.list({ limit: 10, stripeAccount: stripeUserId }),
-    stripe.products.list({ limit: 10, active: true, stripeAccount: stripeUserId }),
+    stripe.charges.list({ limit: 10 }, { stripeAccount: stripeUserId }),
+    stripe.customers.list({ limit: 10 }, { stripeAccount: stripeUserId }),
+    stripe.products.list({ limit: 10 , active: true }, { stripeAccount: stripeUserId }),
     stripe.subscriptions.list({
       limit: 10,
-      status: 'active',
+      status: 'active' }, {
       stripeAccount: stripeUserId,
     }),
   ])
