@@ -1,9 +1,8 @@
+// lib/oauth/oauth-provider-factory.ts
+
 import { BaseOAuthProvider, ProviderConfig } from './base-oauth-provider'
 import { ShopifyProvider } from './providers/ShopifyProvider'
-// Import other providers here as I create them
-// import { StripeProvider } from './stripe-provider'
-// import { AmazonProvider } from './amazon-provider'
-// import { WooCommerceProvider } from './woocommerce-provider'
+import { StripeProvider } from './providers/StripeProvider' 
 
 type SupportedProvider = 'shopify' | 'stripe' | 'amazon' | 'woocommerce'
 
@@ -11,10 +10,13 @@ export class OAuthProviderFactory {
   /**
    * Map of provider names to their respective classes
    */
-  private static providers: Record<SupportedProvider, new (config: ProviderConfig) => BaseOAuthProvider> = {
+  private static providers: Record<
+    SupportedProvider,
+    new (config: ProviderConfig) => BaseOAuthProvider
+  > = {
     shopify: ShopifyProvider,
-    // stripe: StripeProvider, // Uncomment when created
-    // amazon: AmazonProvider, // Uncomment when created
+    stripe: StripeProvider, 
+    // amazon: AmazonProvider,    // Uncomment when created
     // woocommerce: WooCommerceProvider, // Uncomment when created
   } as any // Temporary type assertion until all providers are implemented
 
@@ -32,18 +34,27 @@ export class OAuthProviderFactory {
     if (!ProviderClass) {
       throw new Error(
         `Provider "${providerName}" is not supported. ` +
-        `Supported providers: ${Object.keys(this.providers).join(', ')}`
+          `Supported providers: ${Object.keys(this.providers).join(', ')}`
       )
     }
 
     // Load configuration from environment variables
     const config = this.getProviderConfig(normalizedProvider)
 
+     // 🔍 TEMP DEBUG: see what Stripe actually gets
+    if (normalizedProvider === 'stripe') {
+      console.log('Stripe config in factory:', {
+        clientId: config.clientId,
+        hasClientId: !!config.clientId,
+        hasClientSecret: !!config.clientSecret,
+      })
+    }
+  
     // Validate required credentials exist
     if (!config.clientId || !config.clientSecret) {
       throw new Error(
         `Missing credentials for provider "${providerName}". ` +
-        `Please check your environment variables.`
+          `Please check your environment variables.`
       )
     }
 

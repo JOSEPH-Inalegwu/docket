@@ -21,6 +21,16 @@ export async function GET(
   const error = searchParams.get('error')
   const shop = searchParams.get('shop')
 
+  // 🔍 TEMP LOG: see what we get back from Stripe
+  console.log('OAuth callback received:', {
+    provider,
+    userId,
+    code,
+    state,
+    error,
+    shop,
+  })
+
   // Get base URL from env
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL
 

@@ -40,21 +40,62 @@ export default function SettingsPage() {
 
     const fetchConnections = async () => {
       try {
-        const res = await fetch('/api/connections/shopify')
-        if (res.ok) {
-          const data = await res.json()
-          if (data.connected) {
-            setConnections([
-              {
-                id: 'shopify',
-                name: 'Shopify',
-                icon: ShoppingBag,
-                connectedAt: data.connection.created_at,
-                shopDomain: data.connection.shop_domain,
+        const providers = [
+          {
+            id: 'shopify',
+            name: 'Shopify',
+            icon: ShoppingBag,
+          },
+          {
+            id: 'stripe',
+            name: 'Stripe',
+            icon: LinkIcon,
+          },
+        ]
+
+        const results = await Promise.all(
+          providers.map(async (p) => {
+            if (p.id === 'shopify') {
+              const res = await fetch('/api/connections/shopify')
+              if (!res.ok) return null
+
+              const data = await res.json()
+
+              if (!data.connected || !data.connection) return null
+
+              const conn = data.connection
+              return {
+                id: p.id,
+                name: p.name,
+                icon: p.icon,
+                connectedAt: conn.connected_at,
+                shopDomain: conn.shop_domain,
               }
-            ])
-          }
-        }
+            }
+
+            const res = await fetch(`/api/connections/${p.id}`)
+            if (!res.ok) return null
+
+            const data = await res.json()
+
+            if (!data.isConnected) return null
+
+            const shopDomain =
+              p.id === 'stripe'
+                ? data.metadata?.stripeUserId ?? null
+                : data.shopDomain
+
+            return {
+              id: p.id,
+              name: p.name,
+              icon: p.icon,
+              connectedAt: data.connectedAt,
+              shopDomain,
+            }
+          })
+        )
+
+        setConnections(results.filter((c): c is NonNullable<typeof c> => c !== null))
       } catch (error) {
         console.error('Error fetching connections:', error)
       }
