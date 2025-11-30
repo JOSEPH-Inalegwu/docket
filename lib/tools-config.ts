@@ -1,4 +1,4 @@
-import { ShoppingBag, Package, ShoppingCart, TrendingUp, Settings } from 'lucide-react'
+import { ShoppingBag, Package, ShoppingCart, TrendingUp, CreditCard, Settings } from 'lucide-react'
 import { LucideIcon } from 'lucide-react'
 
 export interface Tool {
@@ -45,7 +45,7 @@ export const tools: Tool[] = [
     id: 'stripe',
     name: 'Stripe',
     href: '/dashboard/stripe',
-    icon: TrendingUp,
+    icon: CreditCard,
     color: '#635bff',
     isConnected: false,
     dashboardUrl: 'https://dashboard.stripe.com',

@@ -184,7 +184,7 @@ export default function StripePage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-transparent">
       <main
-        className="mx-auto w-full max-w-6xl px-0 md:px-4 py-4 md:py-6 space-y-6 md:space-y-8"
+        className="mx-auto w-full max-w-6xl px-0 md:px-4 py-4 md:py-6 space-y-6 md:space-y-9"
         aria-label="Stripe account overview"
       >
         {/* Header */}
