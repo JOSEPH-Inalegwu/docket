@@ -2,12 +2,17 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import MetricCard from '../sidebar/metric-card'
 import {
   Loader2,
   AlertCircle,
   RefreshCw,
   CreditCard,
   ExternalLink,
+  DollarSign,
+  Users,
+  Package,
+  TrendingUp,
 } from 'lucide-react'
 
 interface StripeSummaryResponse {
@@ -29,12 +34,33 @@ interface StripeSummaryResponse {
   error?: string
 }
 
+interface StripeTransaction {
+  id: string
+  created: number
+  amount: number
+  currency: string
+  status: string
+  customerEmail: string | null
+  cardBrand: string | null
+  cardLast4: string | null
+}
+
+interface StripeTransactionsResponse {
+  stripeUserId: string
+  hasMore: boolean
+  data: StripeTransaction[]
+}
+
 export default function StripePage() {
   const router = useRouter()
   const [data, setData] = useState<StripeSummaryResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [refreshing, setRefreshing] = useState(false)
+
+  const [transactions, setTransactions] = useState<StripeTransaction[]>([])
+  const [transactionsHasMore, setTransactionsHasMore] = useState(false)
+  const [transactionsLoading, setTransactionsLoading] = useState(true)
 
   const fetchStripeData = async () => {
     try {
@@ -63,14 +89,37 @@ export default function StripePage() {
     }
   }
 
+  const fetchTransactions = async () => {
+    try {
+      setTransactionsLoading(true)
+      const res = await fetch('/api/stripe/transactions?limit=10')
+      if (!res.ok) {
+        console.error('Failed to load Stripe transactions')
+        setTransactions([])
+        setTransactionsHasMore(false)
+        return
+      }
+
+      const json: StripeTransactionsResponse = await res.json()
+      setTransactions(json.data)
+      setTransactionsHasMore(json.hasMore)
+    } catch (e) {
+      console.error('Error loading Stripe transactions', e)
+      setTransactions([])
+      setTransactionsHasMore(false)
+    } finally {
+      setTransactionsLoading(false)
+    }
+  }
+
   useEffect(() => {
     fetchStripeData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    fetchTransactions()
   }, [])
 
   const handleRefresh = async () => {
     setRefreshing(true)
-    await fetchStripeData()
+    await Promise.all([fetchStripeData(), fetchTransactions()])
   }
 
   if (loading) {
@@ -205,92 +254,165 @@ export default function StripePage() {
         {/* Metric blocks (balances, transactions, customers, products, subscriptions) */}
         <section
           aria-label="Stripe key metrics"
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6"
         >
-          {/* Balances */}
-          <div className="rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-800 p-4 sm:p-6">
-            <div className="text-xs uppercase text-gray-500 dark:text-gray-400 mb-1">
-              Balances
-            </div>
-            <div className="space-y-1">
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                Available
-              </div>
-              <div className="text-lg font-semibold">
-                {available
-                  ? formatMoney(available.amount, available.currency)
-                  : '$0.00'}
-              </div>
-              <div className="mt-3 text-sm text-gray-500 dark:text-gray-400">
-                Pending
-              </div>
-              <div className="text-lg font-semibold">
-                {pending
-                  ? formatMoney(pending.amount, pending.currency)
-                  : '$0.00'}
-              </div>
-            </div>
+          <MetricCard
+            title="Balances"
+            value={
+              available
+                ? `${formatMoney(available.amount, available.currency)}`
+                : '$0.00'
+            }
+            icon={DollarSign}
+            iconColor="#10b981"
+            subtitle={
+              pending
+                ? `Pending: ${formatMoney(pending.amount, pending.currency)}`
+                : 'Available / pending'
+            }
+            loading={refreshing}
+          />
+
+          <MetricCard
+            title="Transactions"
+            value={metrics.transactionsCount}
+            icon={CreditCard}
+            iconColor="#6c47ff"
+            subtitle={`Total: ${formatMoney(
+              metrics.transactionsTotalAmount,
+              transactionsCurrency
+            )}`}
+            loading={refreshing}
+          />
+
+          <MetricCard
+            title="Customers"
+            value={metrics.customersCount}
+            icon={Users}
+            iconColor="#f59e0b"
+            subtitle="Recent Stripe customers"
+            loading={refreshing}
+          />
+
+          <MetricCard
+            title="Active subscriptions"
+            value={metrics.subscriptionsCount}
+            icon={TrendingUp}
+            iconColor="#ef4444"
+            subtitle="Billing subscriptions (sample)"
+            loading={refreshing}
+          />
+        </section>
+
+        {/* Recent transactions */}
+        <section
+          aria-label="Recent Stripe transactions"
+          className="space-y-3"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <h2 className="text-lg sm:text-xl font-bold">Recent transactions</h2>
+            <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+              Showing up to 10 latest charges from this connected account
+            </span>
           </div>
 
-          {/* Transactions */}
-          <div className="rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-800 p-4 sm:p-6">
-            <div className="text-xs uppercase text-gray-500 dark:text-gray-400 mb-1">
-              Transactions
-            </div>
-            <div className="text-2xl font-semibold">
-              {metrics.transactionsCount}
-            </div>
-            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-              Payments in the latest sample (up to 10).
-            </p>
-            <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-              Total:{' '}
-              {formatMoney(
-                metrics.transactionsTotalAmount,
-                transactionsCurrency
-              )}
-            </p>
-          </div>
+          <div className="overflow-x-auto">
+            <div className="inline-block min-w-full align-middle">
+              <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+                {transactionsLoading ? (
+                  <div className="p-6 flex items-center justify-center gap-3">
+                    <Loader2 className="w-5 h-5 animate-spin text-[#6c47ff]" />
+                    <span className="text-sm text-gray-600 dark:text-gray-300">
+                      Loading transactions…
+                    </span>
+                  </div>
+                ) : transactions.length === 0 ? (
+                  <div className="p-8 text-center text-sm text-gray-500 dark:text-gray-400">
+                    No transactions yet. New payments for this connected account
+                    will appear here.
+                  </div>
+                ) : (
+                  <table className="min-w-full table-auto text-sm">
+                    <thead className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700">
+                      <tr>
+                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                          Date
+                        </th>
+                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                          Customer
+                        </th>
+                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                          Amount
+                        </th>
+                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                          Status
+                        </th>
+                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                          Payment method
+                        </th>
+                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                          Details
+                        </th>
 
-          {/* Customers */}
-          <div className="rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-800 p-4 sm:p-6">
-            <div className="text-xs uppercase text-gray-500 dark:text-gray-400 mb-1">
-              Customers
-            </div>
-            <div className="text-2xl font-semibold">
-              {metrics.customersCount}
-            </div>
-            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-              Recent customers loaded from Stripe.
-            </p>
-          </div>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {transactions.map((tx) => (
+                        <tr
+                          key={tx.id}
+                          className="border-b border-gray-100 dark:border-gray-700/60 last:border-b-0"
+                        >
+                          <td className="px-4 sm:px-6 py-3 whitespace-nowrap text-gray-700 dark:text-gray-200">
+                            {new Date(tx.created).toLocaleString()}
+                          </td>
+                          <td className="px-4 sm:px-6 py-3 whitespace-nowrap text-gray-700 dark:text-gray-200">
+                            {tx.customerEmail ?? '—'}
+                          </td>
+                          <td className="px-4 sm:px-6 py-3 whitespace-nowrap text-gray-900 dark:text-gray-100 font-medium">
+                            {formatMoney(tx.amount, tx.currency)}
+                          </td>
+                          <td className="px-4 sm:px-6 py-3 whitespace-nowrap">
+                            <span
+                              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                                tx.status === 'succeeded'
+                                  ? 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300'
+                                  : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200'
+                              }`}
+                            >
+                              {tx.status}
+                            </span>
+                          </td>
+                          <td className="px-4 sm:px-6 py-3 whitespace-nowrap text-gray-700 dark:text-gray-200">
+                            {tx.cardBrand && tx.cardLast4
+                              ? `${tx.cardBrand.toUpperCase()} •••• ${tx.cardLast4}`
+                              : '—'}
+                          </td>
+                          <td className="px-4 sm:px-6 py-3 whitespace-nowrap text-right">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const prefix = livemode ? '' : '/test'
+                                const url = `https://dashboard.stripe.com${prefix}/b/${stripeUserId}?destination=/payments/${tx.id}`
+                                window.open(url, '_blank', 'noopener,noreferrer')
+                              }}
+                              className="inline-flex items-center justify-center rounded-md border border-gray-200 gap-1.5  dark:border-gray-700 px-2 py-1 text-xs text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                              aria-label="View payment in Stripe dashboard"
+                            >
+                              View
+                              <ExternalLink className="w-3 h-3" />
+                            </button>
+                          </td>
 
-          {/* Product catalogue */}
-          <div className="rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-800 p-4 sm:p-6">
-            <div className="text-xs uppercase text-gray-500 dark:text-gray-400 mb-1">
-              Product catalogue
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
             </div>
-            <div className="text-2xl font-semibold">
-              {metrics.productsCount}
-            </div>
-            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-              Active products in the latest page.
-            </p>
-          </div>
-
-          {/* Billing – Subscriptions */}
-          <div className="rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-800 p-4 sm:p-6">
-            <div className="text-xs uppercase text-gray-500 dark:text-gray-400 mb-1">
-              Billing – Subscriptions
-            </div>
-            <div className="text-2xl font-semibold">
-              {metrics.subscriptionsCount}
-            </div>
-            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-              Active subscriptions in the latest page.
-            </p>
           </div>
         </section>
+
       </main>
     </div>
   )
