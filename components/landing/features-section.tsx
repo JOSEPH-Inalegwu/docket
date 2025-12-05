@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { 
-  Gauge, 
-  Bell, 
-  Zap, 
+import {
+  Gauge,
+  Bell,
+  Zap,
   TrendingUp,
   Download,
 } from 'lucide-react';
@@ -26,21 +26,21 @@ const features: Feature[] = [
     title: 'Real-Time Unified Dashboard',
     description: 'Stop toggling between 8 different tabs. See your entire business in one place—revenue, ad spend, customer satisfaction, and operational health updating every 5 minutes.',
     benefit: 'Save 30+ minutes daily',
-    image: '/images/Dashboard-metrics.jpeg'
+    image: '/images/Dashboard-metrics.png'
   },
   {
     icon: <Bell className="w-6 h-6" />,
     title: 'Smart Threshold Alerts',
     description: 'Set custom alerts for what matters to your business. Get notified via Slack, email, or SMS when payment rates drop below 95%, response times exceed 2 hours, or ROAS falls under your target.',
     benefit: 'Catch issues before customers complain',
-    image: '/images/Alert Screen.jpeg'
+    image: '/images/Alert Screen.png'
   },
   {
     icon: <Zap className="w-6 h-6" />,
     title: 'One-Click Integrations',
     description: 'Connect Shopify, Stripe, Facebook Ads, Google Analytics, Gorgias, and 10+ platforms in under 5 minutes. Secure OAuth authentication—no API keys, no developer needed.',
     benefit: 'Setup in minutes, not days',
-    image: '/images/Connected Interface.jpeg'
+    image: '/images/Connected Interface.png'
   },
   {
     icon: <Download className="w-6 h-6" />,
@@ -116,14 +116,14 @@ function FeatureCard({ feature, index, isLeft }: { feature: Feature; index: numb
         <div className="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-gray-100 transform group-hover:scale-105 transition-transform duration-300">
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-tr from-[#6c47ff]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
-          
+
           {/* Placeholder Image */}
-          <img 
-            src={feature.image} 
+          <img
+            src={feature.image}
             alt={feature.title}
             className="w-full h-auto"
           />
-          
+
           {/* Floating Badge */}
           <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-lg z-20">
             <span className="text-sm font-semibold text-[#6c47ff]">Live Demo</span>
@@ -148,10 +148,10 @@ export default function FeaturesSection() {
         <div className="text-center max-w-3xl mx-auto mb-20">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#6c47ff]/10 text-[#6c47ff] rounded-full text-sm font-semibold mb-4">
             <Zap className="w-4 h-4" />
-           <p>POWERFUL FEATURES</p>
+            <p>POWERFUL FEATURES</p>
           </div>
-          
-          <h2 
+
+          <h2
             id="features-heading"
             className="font-bold text-[1.75rem] sm:text-[2.25rem] md:text-[2.75rem] lg:text-[3rem] leading-tight md:leading-[1.15] text-[rgb(19,19,22)] mb-4 sm:mb-6 px-4"
           >
@@ -175,9 +175,9 @@ export default function FeaturesSection() {
               </svg>
             </span>
           </h2>
-          
+
           <p className="text-xl text-gray-600">
-            Built for busy ecommerce founders who need clarity, not complexity. 
+            Built for busy ecommerce founders who need clarity, not complexity.
             Monitor what matters, act on what's urgent, and scale with confidence.
           </p>
         </div>
@@ -185,9 +185,9 @@ export default function FeaturesSection() {
         {/* Features List */}
         <div className="space-y-32">
           {features.map((feature, index) => (
-            <FeatureCard 
-              key={index} 
-              feature={feature} 
+            <FeatureCard
+              key={index}
+              feature={feature}
               index={index}
               isLeft={index % 2 === 0}
             />
@@ -214,10 +214,10 @@ export default function FeaturesSection() {
 
             <SignInButton mode="modal">
               <Button variant={'gradient'} aria-label='Start for free'>
-              Get Started Free
-            </Button>
+                Get Started Free
+              </Button>
             </SignInButton>
-            
+
           </div>
         </div>
       </div>
